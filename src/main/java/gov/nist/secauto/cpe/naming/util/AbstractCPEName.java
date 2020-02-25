@@ -48,17 +48,30 @@
 // TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 // EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package org.mitre.cpe.common;
+package gov.nist.secauto.cpe.naming.util;
+
+import gov.nist.secauto.cpe.common.WellFormedName;
 
 /**
- * This class represents a Logical Value.
- * 
- * See {@link <a href="http://cpe.mitre.org">cpe.mitre.org</a>} for more information.
- * 
- * @author <a href="mailto:jkraunelis@mitre.org">Joshua Kraunelis</a>
- * @author <a href="mailto:david.waltermire@nist.gov">David Waltermire</a>
+ * An abstract implementation of a notional CPE Name unbound to a {@link WellFormedName}.
  */
-public enum LogicalValue {
-  ANY,
-  NA;
+public abstract class AbstractCPEName implements CPEName {
+  private final WellFormedName wfn;
+
+  /**
+   * Construct a notional CPE Name based on an unbound {@link WellFormedName}
+   * 
+   * @param wfn
+   *          the {@link WellFormedName} associated with the CPE Name
+   */
+  protected AbstractCPEName(WellFormedName wfn) {
+    this.wfn = wfn;
+  }
+
+  /**
+   * @return {@link WellFormedName} representing the unbound CPE Name
+   */
+  public WellFormedName getWellFormedName() {
+    return wfn;
+  }
 }

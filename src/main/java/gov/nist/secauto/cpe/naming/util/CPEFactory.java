@@ -48,17 +48,36 @@
 // TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 // EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package org.mitre.cpe.matching;
+package gov.nist.secauto.cpe.naming.util;
+
+import java.text.ParseException;
 
 /**
- * Java enumeration for relational values.
- * 
- * @author <a href="mailto:jkraunelis@mitre.org">Joshua Kraunelis</a>
+ * This factory creates new {@link CPEName} instances that represent unbound CPE URIs or formatted
+ * strings.
  */
-public enum Relation {
-  DISJOINT,
-  SUBSET,
-  SUPERSET,
-  EQUAL,
-  UNDEFINED
+public class CPEFactory {
+  private CPEFactory() {
+    // disable construction
+  }
+
+  /**
+   * Creates a new {@link CPEName} instance based on the unbound form provided by the argument.
+   * 
+   * @param name
+   *          an unbound CPE Name
+   * @return a CPEName instance representing the provided name
+   * @throws ParseException
+   *           if the name argument is malformed
+   */
+  public static CPEName newCPEName(String name) throws ParseException {
+    CPEName retval = null;
+    if (name.toLowerCase().startsWith("cpe:2.3:")) {
+      retval = new CPEFormattedStringName(name);
+    } else {
+      retval = new CPEURIName(name);
+    }
+    return retval;
+  }
+
 }

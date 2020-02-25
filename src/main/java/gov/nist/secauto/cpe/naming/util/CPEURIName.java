@@ -48,30 +48,29 @@
 // TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 // EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package org.mitre.cpe.naming.util;
+package gov.nist.secauto.cpe.naming.util;
 
-import org.mitre.cpe.common.WellFormedName;
+import gov.nist.secauto.cpe.common.WellFormedName;
+import gov.nist.secauto.cpe.naming.CPENameBinder;
+import gov.nist.secauto.cpe.naming.CPENameUnbinder;
+
+import java.text.ParseException;
 
 /**
- * An abstract implementation of a notional CPE Name unbound to a {@link WellFormedName}.
+ * A concrete implementation of a URI unbound to a WellFormedName.
  */
-public abstract class AbstractCPEName implements CPEName {
-  private final WellFormedName wfn;
+public class CPEURIName extends AbstractCPEName {
 
-  /**
-   * Construct a notional CPE Name based on an unbound {@link WellFormedName}
-   * 
-   * @param wfn
-   *          the {@link WellFormedName} associated with the CPE Name
-   */
-  protected AbstractCPEName(WellFormedName wfn) {
-    this.wfn = wfn;
+  public CPEURIName(String uri) throws ParseException {
+    super(CPENameUnbinder.unbindURI(uri));
   }
 
   /**
-   * @return {@link WellFormedName} representing the unbound CPE Name
+   * @return the {@link WellFormedName} bound to a URI
    */
-  public WellFormedName getWellFormedName() {
-    return wfn;
+  @Override
+  public String toString() {
+    return CPENameBinder.bindToURI(getWellFormedName());
   }
+
 }

@@ -48,13 +48,13 @@
 // TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 // EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package org.mitre.cpe.common;
+package gov.nist.secauto.cpe.common;
 
 import java.text.ParseException;
 
 /**
- * A collection of utility functions for use with the org.mitre.cpe.matching and
- * org.mitre.cpe.naming packages.
+ * A collection of utility functions for use with the gov.nist.secauto.cpe.matching and
+ * gov.nist.secauto.cpe.naming packages.
  * 
  * See {@link <a href="http://cpe.mitre.org">cpe.mitre.org</a>} for more information.
  * 

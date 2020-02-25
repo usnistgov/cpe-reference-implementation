@@ -48,11 +48,11 @@
 // TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 // EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package org.mitre.cpe.naming.util;
+package gov.nist.secauto.cpe.naming.util;
 
-import org.mitre.cpe.common.WellFormedName;
-import org.mitre.cpe.naming.CPENameBinder;
-import org.mitre.cpe.naming.CPENameUnbinder;
+import gov.nist.secauto.cpe.common.WellFormedName;
+import gov.nist.secauto.cpe.naming.CPENameBinder;
+import gov.nist.secauto.cpe.naming.CPENameUnbinder;
 
 import java.text.ParseException;
 

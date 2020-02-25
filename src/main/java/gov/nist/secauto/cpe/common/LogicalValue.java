@@ -48,29 +48,17 @@
 // TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 // EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package org.mitre.cpe.naming.util;
-
-import org.mitre.cpe.common.WellFormedName;
-import org.mitre.cpe.naming.CPENameBinder;
-import org.mitre.cpe.naming.CPENameUnbinder;
-
-import java.text.ParseException;
+package gov.nist.secauto.cpe.common;
 
 /**
- * A concrete implementation of a URI unbound to a WellFormedName.
+ * This class represents a Logical Value.
+ * 
+ * See {@link <a href="http://cpe.mitre.org">cpe.mitre.org</a>} for more information.
+ * 
+ * @author <a href="mailto:jkraunelis@mitre.org">Joshua Kraunelis</a>
+ * @author <a href="mailto:david.waltermire@nist.gov">David Waltermire</a>
  */
-public class CPEURIName extends AbstractCPEName {
-
-  public CPEURIName(String uri) throws ParseException {
-    super(CPENameUnbinder.unbindURI(uri));
-  }
-
-  /**
-   * @return the {@link WellFormedName} bound to a URI
-   */
-  @Override
-  public String toString() {
-    return CPENameBinder.bindToURI(getWellFormedName());
-  }
-
+public enum LogicalValue {
+  ANY,
+  NA;
 }

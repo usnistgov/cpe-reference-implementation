@@ -23,15 +23,17 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package org.mitre.cpe.matching;
+package gov.nist.secauto.cpe.matching;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import gov.nist.secauto.cpe.common.LogicalValue;
+import gov.nist.secauto.cpe.common.WellFormedName;
+import gov.nist.secauto.cpe.matching.CPENameMatcher;
+import gov.nist.secauto.cpe.naming.CPENameUnbinder;
+
 import org.junit.jupiter.api.Test;
-import org.mitre.cpe.common.LogicalValue;
-import org.mitre.cpe.common.WellFormedName;
-import org.mitre.cpe.naming.CPENameUnbinder;
 
 import java.text.ParseException;
 
