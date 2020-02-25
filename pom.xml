@@ -7,7 +7,7 @@
 	</parent>
 
 	<artifactId>mitre-cpe</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 
 	<packaging>jar</packaging>
 
@@ -15,9 +15,9 @@
 	<url>https://subversion.nist.gov/external1/NVD/mitre-cpe/trunk</url>
 
 	<scm>
-		<connection>scm:svn:https://subversion.nist.gov/external1/NVD/mitre-cpe/tags/mitre-cpe-1.0.0</connection>
-		<developerConnection>scm:svn:https://subversion.nist.gov/external1/NVD/mitre-cpe/tags/mitre-cpe-1.0.0</developerConnection>
-		<url>https://subversion.nist.gov/external1/NVD/mitre-cpe/tags/mitre-cpe-1.0.0</url>
+		<connection>scm:svn:https://subversion.nist.gov/external1/NVD/mitre-cpe/tags/mitre-cpe-1.0.1</connection>
+		<developerConnection>scm:svn:https://subversion.nist.gov/external1/NVD/mitre-cpe/tags/mitre-cpe-1.0.1</developerConnection>
+		<url>https://subversion.nist.gov/external1/NVD/mitre-cpe/tags/mitre-cpe-1.0.1</url>
 	</scm>
 
 	<build>
