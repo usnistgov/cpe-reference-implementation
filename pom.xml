@@ -3,11 +3,11 @@
 	<parent>
 		<groupId>gov.nist</groupId>
 		<artifactId>scap-root</artifactId>
-		<version>3.0.3</version>
+		<version>3.0.14</version>
 	</parent>
 
 	<artifactId>mitre-cpe</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 
 	<packaging>jar</packaging>
 
@@ -15,9 +15,9 @@
 	<url>https://subversion.nist.gov/external1/NVD/mitre-cpe/trunk</url>
 
 	<scm>
-		<connection>scm:svn:https://subversion.nist.gov/external1/NVD/mitre-cpe/tags/mitre-cpe-1.0.2</connection>
-		<developerConnection>scm:svn:https://subversion.nist.gov/external1/NVD/mitre-cpe/tags/mitre-cpe-1.0.2</developerConnection>
-		<url>https://subversion.nist.gov/external1/NVD/mitre-cpe/tags/mitre-cpe-1.0.2</url>
+		<connection>scm:svn:https://subversion.nist.gov/external1/NVD/mitre-cpe/tags/mitre-cpe-1.0.3</connection>
+		<developerConnection>scm:svn:https://subversion.nist.gov/external1/NVD/mitre-cpe/tags/mitre-cpe-1.0.3</developerConnection>
+		<url>https://subversion.nist.gov/external1/NVD/mitre-cpe/tags/mitre-cpe-1.0.3</url>
 	</scm>
 
 	<build>
