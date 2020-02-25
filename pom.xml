@@ -8,12 +8,12 @@
 	</parent>
 
 	<groupId>gov.nist.secauto.cpe</groupId>
-	<artifactId>mitre-cpe</artifactId>
+	<artifactId>cpe-reference-implementation</artifactId>
 	<version>1.0.8-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
-	<name>MITRE CPE</name>
+	<name>CPE Reference Implementation</name>
 	<url>https://subversion.nist.gov/external1/NVD/mitre-cpe/trunk</url>
 
 	<scm>
