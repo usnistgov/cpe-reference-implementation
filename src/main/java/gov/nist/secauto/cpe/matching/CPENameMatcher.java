@@ -24,6 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 // Copyright (c) 2011, The MITRE Corporation
+
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are
@@ -54,9 +55,7 @@ import gov.nist.secauto.cpe.common.LogicalValue;
 import gov.nist.secauto.cpe.common.Utilities;
 import gov.nist.secauto.cpe.common.WellFormedName;
 import gov.nist.secauto.cpe.common.WellFormedName.Attribute;
-import gov.nist.secauto.cpe.naming.CPENameUnbinder;
 
-import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -64,7 +63,7 @@ import java.util.Map;
  * The CPENameMatcher is an implementation of the CPE Matching algorithm, as specified in the CPE
  * Matching Standard version 2.3.
  * 
- * See {@link <a href="http://cpe.mitre.org">cpe.mitre.org</a>} for more information.
+ * @see <a href= "https://doi.org/10.6028/NIST.IR.7696">NISTIR 7696 Section 7</a>
  * 
  * @author <a href="mailto:jkraunelis@mitre.org">Joshua Kraunelis</a>
  * @author <a href="mailto:david.waltermire@nist.gov">David Waltermire</a>
@@ -85,8 +84,8 @@ public class CPENameMatcher {
    */
   public static boolean isDisjoint(WellFormedName source, WellFormedName target) {
     // if any pairwise comparison is disjoint, the names are disjoint.
-    Map<WellFormedName.Attribute, Relation> result_list = compareWFNs(source, target);
-    for (Relation result : result_list.values()) {
+    Map<WellFormedName.Attribute, Relation> resultList = compareWFNs(source, target);
+    for (Relation result : resultList.values()) {
       if (Relation.DISJOINT.equals(result)) {
         return true;
       }
@@ -105,8 +104,8 @@ public class CPENameMatcher {
    */
   public static boolean isEqual(WellFormedName source, WellFormedName target) {
     // if every pairwise comparison is equal, the names are equal.
-    Map<WellFormedName.Attribute, Relation> result_list = compareWFNs(source, target);
-    for (Relation result : result_list.values()) {
+    Map<WellFormedName.Attribute, Relation> resultList = compareWFNs(source, target);
+    for (Relation result : resultList.values()) {
       if (!(Relation.EQUAL.equals(result))) {
         return false;
       }
@@ -126,8 +125,8 @@ public class CPENameMatcher {
   public static boolean isSubset(WellFormedName source, WellFormedName target) {
     // if any comparison is anything other than subset or equal, then target is
     // not a subset of source.
-    Map<WellFormedName.Attribute, Relation> result_list = compareWFNs(source, target);
-    for (Relation result : result_list.values()) {
+    Map<WellFormedName.Attribute, Relation> resultList = compareWFNs(source, target);
+    for (Relation result : resultList.values()) {
       if (!(Relation.SUBSET.equals(result)) && !(Relation.EQUAL.equals(result))) {
         return false;
       }
@@ -145,10 +144,11 @@ public class CPENameMatcher {
    * @return true if the target is a superset of the source, false otherwise
    */
   public static boolean isSuperset(WellFormedName source, WellFormedName target) {
-    // if any comparison is anything other than superset or equal, then target is not
+    // if any comparison is anything other than superset or equal, then target is
+    // not
     // a superset of source.
-    Map<WellFormedName.Attribute, Relation> result_list = compareWFNs(source, target);
-    for (Relation result : result_list.values()) {
+    Map<WellFormedName.Attribute, Relation> resultList = compareWFNs(source, target);
+    for (Relation result : resultList.values()) {
       if ((!Relation.SUPERSET.equals(result)) && (!Relation.EQUAL.equals(result))) {
         return false;
       }
@@ -213,24 +213,24 @@ public class CPENameMatcher {
 
     // If Logical Values are equal, result is equal.
     if (lvSource != null && lvTarget != null && lvSource.equals(lvTarget)) {
-        return Relation.EQUAL;
+      return Relation.EQUAL;
     }
 
     // If source value is ANY, result is a superset.
     if (lvSource != null && LogicalValue.ANY.equals(lvSource)) {
-        return Relation.SUPERSET;
+      return Relation.SUPERSET;
     }
     // If target value is ANY, result is a subset.
     if (lvTarget != null && LogicalValue.ANY.equals(lvTarget)) {
-        return Relation.SUBSET;
+      return Relation.SUBSET;
     }
     // If source or target is NA, result is disjoint.
     if (lvSource != null && LogicalValue.NA.equals(lvSource)) {
-        return Relation.DISJOINT;
+      return Relation.DISJOINT;
     }
 
     if (lvTarget != null && LogicalValue.NA.equals(lvTarget)) {
-        return Relation.DISJOINT;
+      return Relation.DISJOINT;
     }
     // only Strings will get to this point, not LogicalValues
     return compareStrings((String) source, (String) target);
@@ -297,7 +297,7 @@ public class CPENameMatcher {
   }
 
   /**
-   * Searches a string for the backslash character
+   * Searches a string for the backslash character.
    * 
    * @param str
    *          string to search in
@@ -307,7 +307,7 @@ public class CPENameMatcher {
    */
   private static boolean isEvenWildcards(String str, int idx) {
     int result = 0;
-    while ((idx > 0) && (Utilities.strchr(str, "\\", idx - 1)) != -1) {
+    while ((idx > 0) && (Utilities.strchr(str, '\\', idx - 1)) != -1) {
       idx = idx - 1;
       result = result + 1;
     }
@@ -315,7 +315,7 @@ public class CPENameMatcher {
   }
 
   /**
-   * Tests if an Object is an instance of the String class
+   * Tests if an Object is an instance of the String class.
    * 
    * @param arg
    *          the Object to test

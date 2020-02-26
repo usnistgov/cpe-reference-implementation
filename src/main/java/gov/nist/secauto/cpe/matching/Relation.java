@@ -24,6 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 // Copyright (c) 2011, The MITRE Corporation
+
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are
@@ -60,5 +61,5 @@ public enum Relation {
   SUBSET,
   SUPERSET,
   EQUAL,
-  UNDEFINED
+  UNDEFINED;
 }

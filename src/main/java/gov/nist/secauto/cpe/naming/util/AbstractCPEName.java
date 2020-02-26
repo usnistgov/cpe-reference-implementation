@@ -24,6 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 // Copyright (c) 2011, The MITRE Corporation
+
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are
@@ -51,15 +52,18 @@
 package gov.nist.secauto.cpe.naming.util;
 
 import gov.nist.secauto.cpe.common.WellFormedName;
+import gov.nist.secauto.cpe.naming.CPENameBinder;
+
+import java.net.URI;
 
 /**
- * An abstract implementation of a notional CPE Name unbound to a {@link WellFormedName}.
+ * An abstract implementation of a notional unbound CPE Name expressed as a {@link WellFormedName}.
  */
 public abstract class AbstractCPEName implements CPEName {
   private final WellFormedName wfn;
 
   /**
-   * Construct a notional CPE Name based on an unbound {@link WellFormedName}
+   * Construct a notional, unbound CPE Name based on a {@link WellFormedName}.
    * 
    * @param wfn
    *          the {@link WellFormedName} associated with the CPE Name
@@ -68,10 +72,23 @@ public abstract class AbstractCPEName implements CPEName {
     this.wfn = wfn;
   }
 
-  /**
-   * @return {@link WellFormedName} representing the unbound CPE Name
-   */
+  @Override
   public WellFormedName getWellFormedName() {
     return wfn;
+  }
+
+  @Override
+  public URI toUri() {
+    return URI.create(toUriString());
+  }
+
+  @Override
+  public String toUriString() {
+    return CPENameBinder.bindToURI(getWellFormedName());
+  }
+
+  @Override
+  public String toFormattedString() {
+    return CPENameBinder.bindToFS(getWellFormedName());
   }
 }

@@ -24,6 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 // Copyright (c) 2011, The MITRE Corporation
+
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are
@@ -52,20 +53,47 @@ package gov.nist.secauto.cpe.naming.util;
 
 import gov.nist.secauto.cpe.common.WellFormedName;
 
+import java.net.URI;
+
 /**
  * Represents a notional CPE Name unbound to a {@link WellFormedName}. Implementations of this
- * interface will track the unbound form of the CPE Name enabling the bound form to be regenerated.
+ * interface will track the unbound form of the CPE Name enabling the bound form to be
+ * (re)generated.
  */
 public interface CPEName {
   /**
+   * Gets the underlying {@link WellFormedName}.
    * 
    * @return {@link WellFormedName} representing the unbound CPE Name
    */
   WellFormedName getWellFormedName();
 
   /**
+   * Get the specific bound form of the CPE name from the underlying {@link WellFormedName}.
    * 
    * @return the bound form of the associated {@link WellFormedName}
    */
+  @Override
   String toString();
+
+  /**
+   * Gets the underlying {@link WellFormedName} as a CPE URI.
+   * 
+   * @return the {@link WellFormedName} bound to a URI
+   */
+  URI toUri();
+
+  /**
+   * Gets the underlying {@link WellFormedName} as a CPE URI.
+   * 
+   * @return the {@link WellFormedName} bound to a URI
+   */
+  String toUriString();
+
+  /**
+   * Gets the underlying {@link WellFormedName} as a formatted string.
+   * 
+   * @return the {@link WellFormedName} as a CPE formatted string
+   */
+  String toFormattedString();
 }

@@ -24,6 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 // Copyright (c) 2011, The MITRE Corporation
+
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are
@@ -51,26 +52,50 @@
 package gov.nist.secauto.cpe.naming.util;
 
 import gov.nist.secauto.cpe.common.WellFormedName;
-import gov.nist.secauto.cpe.naming.CPENameBinder;
 import gov.nist.secauto.cpe.naming.CPENameUnbinder;
 
+import java.net.URI;
 import java.text.ParseException;
 
 /**
  * A concrete implementation of a URI unbound to a WellFormedName.
  */
-public class CPEURIName extends AbstractCPEName {
+public class CPEUriName extends AbstractCPEName {
 
-  public CPEURIName(String uri) throws ParseException {
+  /**
+   * Constructs a URI bound CPE name based on the provided URI string.
+   * 
+   * @param uri
+   *          a CPE name bound to a URI
+   * @throws ParseException
+   *           if the URI bound CPE name is not valid
+   * 
+   */
+  public CPEUriName(String uri) throws ParseException {
     super(CPENameUnbinder.unbindURI(uri));
   }
 
   /**
+   * Constructs a URI bound CPE name based on the provided URI string.
+   * 
+   * @param uri
+   *          a CPE name bound to a URI
+   * @throws ParseException
+   *           if the URI bound CPE name is not valid
+   */
+  public CPEUriName(URI uri) throws ParseException {
+    this(uri.toASCIIString());
+  }
+
+  /**
+   * Gets the underlying {@link WellFormedName} as a CPE URI.
+   * 
    * @return the {@link WellFormedName} bound to a URI
+   * 
+   * @see CPEUriName#toUriString()
    */
   @Override
   public String toString() {
-    return CPENameBinder.bindToURI(getWellFormedName());
+    return toUriString();
   }
-
 }

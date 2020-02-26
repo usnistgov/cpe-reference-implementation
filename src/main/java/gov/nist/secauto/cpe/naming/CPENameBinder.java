@@ -24,6 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 // Copyright (c) 2011, The MITRE Corporation
+
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are
@@ -54,13 +55,12 @@ import gov.nist.secauto.cpe.common.LogicalValue;
 import gov.nist.secauto.cpe.common.Utilities;
 import gov.nist.secauto.cpe.common.WellFormedName;
 
-import java.text.ParseException;
-
 /**
  * The CPENameBinder class is a simple implementation of the CPE Name binding algorithm, as
  * specified in the CPE Naming Standard version 2.3.
  * 
- * See {@link <a href="http://cpe.mitre.org">cpe.mitre.org</a>} for more information.
+ * @see <a href= "https://doi.org/10.6028/NIST.IR.7695">NISTIR 7695 Section 6.1.2</a>
+ * @see <a href= "https://doi.org/10.6028/NIST.IR.7695">NISTIR 7695 Section 6.2.2</a>
  * 
  * @author <a href="mailto:jkraunelis@mitre.org">Joshua Kraunelis</a>
  * @author <a href="mailto:david.waltermire@nist.gov">David Waltermire</a>
@@ -74,41 +74,41 @@ public class CPENameBinder {
   // Define the attributes that correspond to the seven components in a v2.2. CPE.
   public static final WellFormedName.Attribute[] URI_ATTRIBUTES
       = { WellFormedName.Attribute.PART, WellFormedName.Attribute.VENDOR, WellFormedName.Attribute.PRODUCT,
-          WellFormedName.Attribute.VERSION, WellFormedName.Attribute.UPDATE, WellFormedName.Attribute.EDITION, // requires
-                                                                                                               // packing
+          WellFormedName.Attribute.VERSION, WellFormedName.Attribute.UPDATE, WellFormedName.Attribute.EDITION,
+          // requires packing
           WellFormedName.Attribute.LANGUAGE };
 
   /**
    * Binds a {@link WellFormedName} object to a URI.
    * 
-   * @param w
+   * @param wfn
    *          WellFormedName to be bound to URI
    * @return URI binding of WFN
    */
-  public static String bindToURI(WellFormedName w) {
+  public static String bindToURI(WellFormedName wfn) {
 
     // Initialize the output with the CPE v2.2 URI prefix.
     String uri = "cpe:/";
 
     // Iterate over the well formed name
-    for (WellFormedName.Attribute a : URI_ATTRIBUTES) {
-      String v = "";
-      if (WellFormedName.Attribute.EDITION.equals(a)) {
+    for (WellFormedName.Attribute attr : URI_ATTRIBUTES) {
+      String value = "";
+      if (WellFormedName.Attribute.EDITION.equals(attr)) {
         // Call the pack() helper function to compute the proper
         // binding for the edition element.
-        String ed = bindValueForURI(w.get(WellFormedName.Attribute.EDITION));
-        String sw_ed = bindValueForURI(w.get(WellFormedName.Attribute.SW_EDITION));
-        String t_sw = bindValueForURI(w.get(WellFormedName.Attribute.TARGET_SW));
-        String t_hw = bindValueForURI(w.get(WellFormedName.Attribute.TARGET_HW));
-        String oth = bindValueForURI(w.get(WellFormedName.Attribute.OTHER));
-        v = pack(ed, sw_ed, t_sw, t_hw, oth);
+        String edition = bindValueForURI(wfn.get(WellFormedName.Attribute.EDITION));
+        String swEdition = bindValueForURI(wfn.get(WellFormedName.Attribute.SW_EDITION));
+        String targetSoftware = bindValueForURI(wfn.get(WellFormedName.Attribute.TARGET_SW));
+        String targetHardware = bindValueForURI(wfn.get(WellFormedName.Attribute.TARGET_HW));
+        String other = bindValueForURI(wfn.get(WellFormedName.Attribute.OTHER));
+        value = pack(edition, swEdition, targetSoftware, targetHardware, other);
       } else {
-        // Get the value for a in w, then bind to a string
+        // Get the value for attr in wfn, then bind to a string
         // for inclusion in the URI.
-        v = bindValueForURI(w.get(a));
+        value = bindValueForURI(wfn.get(attr));
       }
-      // Append v to the URI then add a colon.
-      uri = Utilities.strcat(uri, v, ":");
+      // Append value to the URI then add a colon.
+      uri = Utilities.strcat(uri, value, ":");
     }
     // Return the URI string, with trailing colons trimmed.
     return trim(uri);
@@ -117,18 +117,18 @@ public class CPENameBinder {
   /**
    * Top-level function used to bind WFN w to formatted string.
    * 
-   * @param w
+   * @param wfn
    *          WellFormedName to bind
    * @return Formatted String
    */
-  public static String bindToFS(WellFormedName w) {
+  public static String bindToFS(WellFormedName wfn) {
     // Initialize the output with the CPE v2.3 string prefix.
     String fs = "cpe:2.3:";
-    for (WellFormedName.Attribute a : WellFormedName.Attribute.values()) {
-      String v = bindValueForFS(w.get(a));
-      fs = Utilities.strcat(fs, v);
+    for (WellFormedName.Attribute attr : WellFormedName.Attribute.values()) {
+      String value = bindValueForFS(wfn.get(attr));
+      fs = Utilities.strcat(fs, value);
       // add a colon except at the very end
-      if (!WellFormedName.Attribute.OTHER.equals(a)) {
+      if (!WellFormedName.Attribute.OTHER.equals(attr)) {
         fs = Utilities.strcat(fs, ":");
       }
     }
@@ -138,101 +138,110 @@ public class CPENameBinder {
   /**
    * Convert the value v to its proper string representation for insertion to formatted string.
    * 
-   * @param v
+   * @param value
    *          value to convert
    * @return Formatted value
    */
-  private static String bindValueForFS(Object v) {
-    if (v instanceof LogicalValue) {
-      LogicalValue l = (LogicalValue) v;
+  private static String bindValueForFS(Object value) {
+    if (value instanceof LogicalValue) {
+      LogicalValue logicalValue = (LogicalValue) value;
       // The value NA binds to a blank.
-      if (LogicalValue.ANY.equals(l)) {
+      if (LogicalValue.ANY.equals(logicalValue)) {
         return "*";
       }
       // The value NA binds to a single hyphen.
-      if (LogicalValue.NA.equals(l)) {
+      if (LogicalValue.NA.equals(logicalValue)) {
         return "-";
       }
     }
-    return processQuotedChars((String) v);
+    return processQuotedChars((String) value);
   }
 
   /**
-   * Inspect each character in string s. Certain nonalpha characters pass thru without escaping into
-   * the result, but most retain escaping.
+   * Inspect each character in the provided string, and escape as required.
+   * <p>
+   * Certain non-alpha characters pass thru without escaping into the result, but most retain
+   * escaping.
    * 
-   * @param s
-   * @return
+   * @param str
+   *          the string to process
+   * @return the processed string result
    */
-  private static String processQuotedChars(String s) {
+  private static String processQuotedChars(String str) {
     String result = "";
-    int idx = 0;
-    while (idx < Utilities.strlen(s)) {
-      String c = Utilities.substr(s, idx, idx + 1);
-      if (!c.equals("\\")) {
+    int index = 0;
+    while (index < Utilities.strlen(str)) {
+      String ch = Utilities.substr(str, index, index + 1);
+      if (!ch.equals("\\")) {
         // unquoted characters pass thru unharmed.
-        result = Utilities.strcat(result, c);
+        result = Utilities.strcat(result, ch);
       } else {
         // escaped characters are examined.
-        String nextchr = Utilities.substr(s, idx + 1, idx + 2);
+        String nextchr = Utilities.substr(str, index + 1, index + 2);
         // the period, hyphen and underscore pass unharmed.
         if (nextchr.equals(".") || nextchr.equals("-") || nextchr.equals("_")) {
           result = Utilities.strcat(result, nextchr);
-          idx = idx + 2;
+          index = index + 2;
           continue;
         } else {
           // all others retain escaping.
           result = Utilities.strcat(result, "\\", nextchr);
-          idx = idx + 2;
+          index = index + 2;
           continue;
         }
       }
-      idx = idx + 1;
+      index = index + 1;
     }
     return result;
   }
 
   /**
-   * Converts a string to the proper string for including in a CPE v2.2-conformant URI. The logical
+   * Converts a value to the proper string for including in a CPE v2.2-conformant URI. The logical
    * value ANY binds to the blank in the 2.2-conformant URI.
    * 
-   * @param s
-   *          string to be converted
-   * @return converted string
+   * @param value
+   *          the value to be converted
+   * @return the converted string
    */
-  private static String bindValueForURI(Object s) {
-    if (s instanceof LogicalValue) {
-      LogicalValue l = (LogicalValue) s;
+  private static String bindValueForURI(Object value) {
+    if (value instanceof LogicalValue) {
+      LogicalValue logicalValue = (LogicalValue) value;
       // The value NA binds to a blank.
-      if (LogicalValue.ANY.equals(l)) {
+      if (LogicalValue.ANY.equals(logicalValue)) {
         return "";
       }
       // The value NA binds to a single hyphen.
-      if (LogicalValue.NA.equals(l)) {
+      if (LogicalValue.NA.equals(logicalValue)) {
         return "-";
       }
     }
 
     // If we get here, we're dealing with a string value.
-    return transformForURI((String) s);
+    return transformForURI((String) value);
   }
 
   /**
-   * Scans an input string and performs the following transformations: - Pass alphanumeric characters
-   * thru untouched - Percent-encode quoted non-alphanumerics as needed - Unquoted special characters
-   * are mapped to their special forms
+   * Scans an input string and performs a series of transformations to convert the string to a bound
+   * URI form.
+   * <p>
+   * The following transformations are performed:
+   * <ul>
+   * <li>Pass alphanumeric characters thru untouched</li>
+   * <li>Percent-encode quoted non-alphanumerics as needed</li>
+   * <li>Unquoted special characters are mapped to their special forms</li>
+   * </ul>
    * 
-   * @param s
+   * @param str
    *          string to be transformed
    * @return transformed string
    */
-  private static String transformForURI(String s) {
+  private static String transformForURI(String str) {
     String result = "";
     int idx = 0;
 
-    while (idx < Utilities.strlen(s)) {
+    while (idx < Utilities.strlen(str)) {
       // Get the idx'th character of s.
-      String thischar = Utilities.substr(s, idx, idx + 1);
+      String thischar = Utilities.substr(str, idx, idx + 1);
       // Alphanumerics (incl. underscore) pass untouched.
       if (Utilities.isAlphanum(thischar)) {
         result = Utilities.strcat(result, thischar);
@@ -242,7 +251,7 @@ public class CPENameBinder {
       // Check for escape character.
       if (thischar.equals("\\")) {
         idx = idx + 1;
-        String nxtchar = Utilities.substr(s, idx, idx + 1);
+        String nxtchar = Utilities.substr(str, idx, idx + 1);
         result = Utilities.strcat(result, pctEncode(nxtchar));
         idx = idx + 1;
         continue;
@@ -264,146 +273,147 @@ public class CPENameBinder {
    * Returns the appropriate percent-encoding of character c. Certain characters are returned without
    * encoding.
    * 
-   * @param c
+   * @param ch
    *          the single character string to be encoded
    * @return the percent encoded string
    */
-  private static String pctEncode(String c) {
-    if (c.equals("!")) {
+  private static String pctEncode(String ch) {
+    if (ch.equals("!")) {
       return "%21";
     }
-    if (c.equals("\"")) {
+    if (ch.equals("\"")) {
       return "%22";
     }
-    if (c.equals("#")) {
+    if (ch.equals("#")) {
       return "%23";
     }
-    if (c.equals("$")) {
+    if (ch.equals("$")) {
       return "%24";
     }
-    if (c.equals("%")) {
+    if (ch.equals("%")) {
       return "%25";
     }
-    if (c.equals("&")) {
+    if (ch.equals("&")) {
       return "%26";
     }
-    if (c.equals("'")) {
+    if (ch.equals("'")) {
       return "%27";
     }
-    if (c.equals("(")) {
+    if (ch.equals("(")) {
       return "%28";
     }
-    if (c.equals(")")) {
+    if (ch.equals(")")) {
       return "%29";
     }
-    if (c.equals("*")) {
+    if (ch.equals("*")) {
       return "%2a";
     }
-    if (c.equals("+")) {
+    if (ch.equals("+")) {
       return "%2b";
     }
-    if (c.equals(",")) {
+    if (ch.equals(",")) {
       return "%2c";
     }
     // bound without encoding.
-    if (c.equals("-")) {
-      return c;
+    if (ch.equals("-")) {
+      return ch;
     }
     // bound without encoding.
-    if (c.equals(".")) {
-      return c;
+    if (ch.equals(".")) {
+      return ch;
     }
-    if (c.equals("/")) {
+    if (ch.equals("/")) {
       return "%2f";
     }
-    if (c.equals(":")) {
+    if (ch.equals(":")) {
       return "%3a";
     }
-    if (c.equals(";")) {
+    if (ch.equals(";")) {
       return "%3b";
     }
-    if (c.equals("<")) {
+    if (ch.equals("<")) {
       return "%3c";
     }
-    if (c.equals("=")) {
+    if (ch.equals("=")) {
       return "%3d";
     }
-    if (c.equals(">")) {
+    if (ch.equals(">")) {
       return "%3e";
     }
-    if (c.equals("?")) {
+    if (ch.equals("?")) {
       return "%3f";
     }
-    if (c.equals("@")) {
+    if (ch.equals("@")) {
       return "%40";
     }
-    if (c.equals("[")) {
+    if (ch.equals("[")) {
       return "%5b";
     }
-    if (c.equals("\\")) {
+    if (ch.equals("\\")) {
       return "%5c";
     }
-    if (c.equals("]")) {
+    if (ch.equals("]")) {
       return "%5d";
     }
-    if (c.equals("^")) {
+    if (ch.equals("^")) {
       return "%5e";
     }
-    if (c.equals("`")) {
+    if (ch.equals("`")) {
       return "%60";
     }
-    if (c.equals("{")) {
+    if (ch.equals("{")) {
       return "%7b";
     }
-    if (c.equals("|")) {
+    if (ch.equals("|")) {
       return "%7c";
     }
-    if (c.equals("}")) {
+    if (ch.equals("}")) {
       return "%7d";
     }
-    if (c.equals("~")) {
+    if (ch.equals("~")) {
       return "%7d";
     }
     // Shouldn't reach here, return original character
-    return c;
+    return ch;
   }
 
   /**
    * Packs the values of the five arguments into the single edition component. If all the values are
    * blank, the function returns a blank.
    * 
-   * @param ed
+   * @param edition
    *          edition string
-   * @param sw_ed
+   * @param swEdition
    *          software edition string
-   * @param t_sw
+   * @param targetSoftware
    *          target software string
-   * @param t_hw
+   * @param targetHardware
    *          target hardware string
-   * @param oth
+   * @param other
    *          other edition information string
    * @return the packed string, or blank
    */
-  private static String pack(String ed, String sw_ed, String t_sw, String t_hw, String oth) {
-    if (sw_ed.equals("") && t_sw.equals("") && t_hw.equals("") && oth.equals("")) {
+  private static String pack(String edition, String swEdition, String targetSoftware, String targetHardware,
+      String other) {
+    if (swEdition.equals("") && targetSoftware.equals("") && targetHardware.equals("") && other.equals("")) {
       // All the extended attributes are blank, so don't do
       // any packing, just return ed.
-      return ed;
+      return edition;
     }
     // Otherwise, pack the five values into a single string
     // prefixed and internally delimited with the tilde.
-    return Utilities.strcat("~", ed, "~", sw_ed, "~", t_sw, "~", t_hw, "~", oth);
+    return Utilities.strcat("~", edition, "~", swEdition, "~", targetSoftware, "~", targetHardware, "~", other);
   }
 
   /**
    * Removes trailing colons from the URI.
    * 
-   * @param s
+   * @param str
    *          the string to be trimmed
    * @return the trimmed string
    */
-  private static String trim(String s) {
-    String s1 = Utilities.reverse(s);
+  private static String trim(String str) {
+    String s1 = Utilities.reverse(str);
     int idx = 0;
     for (int i = 0; i != Utilities.strlen(s1); i++) {
       if (Utilities.substr(s1, i, i + 1).equals(":")) {
@@ -415,22 +425,5 @@ public class CPENameBinder {
     // Return the substring after all trailing colons,
     // reversed back to its original character order.
     return Utilities.reverse(Utilities.substr(s1, idx, Utilities.strlen(s1)));
-  }
-
-  public static void main(String[] args) throws ParseException {
-    // A few examples.
-    WellFormedName wfn = new WellFormedName("a", "microsoft", "internet_explorer", "8\\.0\\.6001", "beta",
-        LogicalValue.ANY, "sp2", null, null, null, null);
-    WellFormedName wfn2 = new WellFormedName();
-    wfn2.set(WellFormedName.Attribute.PART, "a");
-    wfn2.set(WellFormedName.Attribute.VENDOR, "foo\\$bar");
-    wfn2.set(WellFormedName.Attribute.PRODUCT, "insight");
-    wfn2.set(WellFormedName.Attribute.VERSION, "7\\.4\\.0\\.1570");
-    wfn2.set(WellFormedName.Attribute.TARGET_SW, "win2003");
-    wfn2.set(WellFormedName.Attribute.UPDATE, LogicalValue.NA);
-    wfn2.set(WellFormedName.Attribute.SW_EDITION, "online");
-    wfn2.set(WellFormedName.Attribute.TARGET_HW, "x64");
-    System.out.println(CPENameBinder.bindToURI(wfn));
-    System.out.println(CPENameBinder.bindToFS(wfn2));
   }
 }

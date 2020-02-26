@@ -39,25 +39,26 @@ import java.text.ParseException;
 
 class CPENameMatcherTest {
 
-  @Test
-  void test() throws ParseException {
-    // Examples.
-    WellFormedName wfn = new WellFormedName("a", "microsoft", "internet_explorer", "8\\.0\\.6001", "beta",
-        LogicalValue.ANY, "sp2", null, null, null, null);
-    WellFormedName wfn2 = new WellFormedName("a", "microsoft", "internet_explorer", LogicalValue.ANY, LogicalValue.ANY,
-        LogicalValue.ANY, LogicalValue.ANY, LogicalValue.ANY, LogicalValue.ANY, LogicalValue.ANY, LogicalValue.ANY);
-    
-    assertFalse(CPENameMatcher.isDisjoint(wfn, wfn2));
-    assertFalse(CPENameMatcher.isEqual(wfn, wfn2));
-    assertTrue(CPENameMatcher.isSubset(wfn, wfn2)); // wfn2 is a subset of wfn
-    assertFalse(CPENameMatcher.isSuperset(wfn, wfn2));
+	@Test
+	void test() throws ParseException {
+		// Examples.
+		WellFormedName wfn = new WellFormedName("a", "microsoft", "internet_explorer", "8\\.0\\.6001", "beta",
+				LogicalValue.ANY, "sp2", null, null, null, null);
+		WellFormedName wfn2 = new WellFormedName("a", "microsoft", "internet_explorer", LogicalValue.ANY,
+				LogicalValue.ANY, LogicalValue.ANY, LogicalValue.ANY, LogicalValue.ANY, LogicalValue.ANY,
+				LogicalValue.ANY, LogicalValue.ANY);
 
-    wfn = CPENameUnbinder.unbindFS("cpe:2.3:a:adobe:*:9.*:*:PalmOS:*:*:*:*:*");
-    wfn2 = CPENameUnbinder.unbindURI("cpe:/a::Reader:9.3.2:-:-");
-    assertTrue(CPENameMatcher.isDisjoint(wfn, wfn2)); // true, wfn2 and wfn are disjoint
-    assertFalse(CPENameMatcher.isEqual(wfn, wfn2));
-    assertFalse(CPENameMatcher.isSubset(wfn, wfn2));
-    assertFalse(CPENameMatcher.isSuperset(wfn, wfn2));
-  }
+		assertFalse(CPENameMatcher.isDisjoint(wfn, wfn2));
+		assertFalse(CPENameMatcher.isEqual(wfn, wfn2));
+		assertTrue(CPENameMatcher.isSubset(wfn, wfn2)); // wfn2 is a subset of wfn
+		assertFalse(CPENameMatcher.isSuperset(wfn, wfn2));
+
+		wfn = CPENameUnbinder.unbindFS("cpe:2.3:a:adobe:*:9.*:*:PalmOS:*:*:*:*:*");
+		wfn2 = CPENameUnbinder.unbindURI("cpe:/a::Reader:9.3.2:-:-");
+		assertTrue(CPENameMatcher.isDisjoint(wfn, wfn2)); // true, wfn2 and wfn are disjoint
+		assertFalse(CPENameMatcher.isEqual(wfn, wfn2));
+		assertFalse(CPENameMatcher.isSubset(wfn, wfn2));
+		assertFalse(CPENameMatcher.isSuperset(wfn, wfn2));
+	}
 
 }

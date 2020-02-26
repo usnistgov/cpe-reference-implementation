@@ -24,6 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 // Copyright (c) 2011, The MITRE Corporation
+
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are
@@ -58,13 +59,14 @@ import java.util.Map;
  * The WellFormedName class represents a Well Formed Name, as defined in the CPE Specification
  * version 2.3.
  * 
- * See {@link <a href="http://cpe.mitre.org">cpe.mitre.org</a>} for details.
+ * @see <a href= "https://doi.org/10.6028/NIST.IR.7695">NISTIR 7695 Section 5</a>
  * 
  * @author <a href="mailto:jkraunelis@mitre.org">Joshua Kraunelis</a>
  * @author <a href="mailto:david.waltermire@nist.gov">David Waltermire</a>
  */
 public class WellFormedName {
   public enum Attribute {
+
     PART,
     VENDOR,
     PRODUCT,
@@ -84,12 +86,20 @@ public class WellFormedName {
 
   /**
    * Constructs a new WellFormedName object, with all components set to the default value "ANY".
+   * 
+   * @throws RuntimeException
+   *           if this implementation is incorrect
    */
-  public WellFormedName() throws ParseException {
+  public WellFormedName() {
     for (Attribute a : Attribute.values()) {
       // don't set part to ANY
       if (!Attribute.PART.equals(a)) {
-        set(a, LogicalValue.ANY);
+        try {
+          set(a, LogicalValue.ANY);
+        } catch (ParseException ex) {
+          // the assignment of ANY is a valid value, so this should never happen
+          throw new RuntimeException(ex);
+        }
       }
     }
   }
@@ -112,17 +122,20 @@ public class WellFormedName {
    *          string representing the edition component
    * @param language
    *          string representing the language component
-   * @param sw_edition
+   * @param swEdition
    *          string representing the sw_edition component
-   * @param target_sw
+   * @param targetSoftware
    *          string representing the target_sw component
-   * @param target_hw
+   * @param targetHardware
    *          string representing the target_hw component
    * @param other
    *          string representing the other component
+   * @throws ParseException
+   *           if any of the provided values are invalid
    */
   public WellFormedName(Object part, Object vendor, Object product, Object version, Object update, Object edition,
-      Object language, Object sw_edition, Object target_sw, Object target_hw, Object other) throws ParseException {
+      Object language, Object swEdition, Object targetSoftware, Object targetHardware, Object other)
+      throws ParseException {
     set(Attribute.PART, part);
     set(Attribute.VENDOR, vendor);
     set(Attribute.PRODUCT, product);
@@ -130,17 +143,19 @@ public class WellFormedName {
     set(Attribute.UPDATE, update);
     set(Attribute.EDITION, edition);
     set(Attribute.LANGUAGE, language);
-    set(Attribute.SW_EDITION, sw_edition);
-    set(Attribute.TARGET_SW, target_sw);
-    set(Attribute.TARGET_HW, target_hw);
+    set(Attribute.SW_EDITION, swEdition);
+    set(Attribute.TARGET_SW, targetSoftware);
+    set(Attribute.TARGET_HW, targetHardware);
     set(Attribute.OTHER, other);
   }
 
   /**
+   * get the value of the provided attribute.
+   * 
    * @param attribute
    *          String representing the component value to get
-   * @return the String value of the given component, or default value "ANY" if the component does not
-   *         exist
+   * @return the String value of the given component, or default value {@link LogicalValue.ANY} if the
+   *         component does not exist
    */
   public Object get(Attribute attribute) {
     if (this.wfn.containsKey(attribute)) {
@@ -151,12 +166,14 @@ public class WellFormedName {
   }
 
   /**
-   * Sets the given attribute to value, if the attribute is in the list of permissible components
+   * Sets the given attribute to value, if the attribute is in the list of permissible components.
    * 
    * @param attribute
    *          enumerated value representing the component to set
    * @param value
    *          Object representing the value of the given component
+   * @throws ParseException
+   *           if the provided value is invalid
    */
   public final void set(Attribute attribute, Object value) throws ParseException {
     // check to see if we're setting a LogicalValue ANY or NA
@@ -194,28 +211,30 @@ public class WellFormedName {
       }
       // svalue has embedded unquoted ?
       // this will catch a single unquoted ?, so make sure we deal with that
-      // if (svalue.matches("\\?*[\\p{Graph}&&[^\\?]]*(?<!\\\\)[\\?][\\p{Graph}&&[^\\?]]*\\?*")) {
+      // if
+      // (svalue.matches("\\?*[\\p{Graph}&&[^\\?]]*(?<!\\\\)[\\?][\\p{Graph}&&[^\\?]]*\\?*"))
+      // {
       if (svalue.contains("?")) {
         if (svalue.equals("?")) {
           // single ? is valid
           value = svalue;
         } else {
           // remove leading and trailing ?s
-          StringBuffer v = new StringBuffer(svalue);
-          while (v.indexOf("?") == 0) {
+          StringBuffer buf = new StringBuffer(svalue);
+          while (buf.indexOf("?") == 0) {
             // remove all leading ?'s
-            v.deleteCharAt(0);
+            buf.deleteCharAt(0);
           }
-          v = v.reverse();
-          while (v.indexOf("?") == 0) {
+          buf = buf.reverse();
+          while (buf.indexOf("?") == 0) {
             // remove all trailing ?'s (string has been reversed)
-            v.deleteCharAt(0);
+            buf.deleteCharAt(0);
           }
           // back to normal
-          v = v.reverse();
+          buf = buf.reverse();
           // after leading and trailing ?s are removed, check if value
           // contains unquoted ?s
-          if (v.toString().matches(".+(?<!\\\\)[\\?].+")) {
+          if (buf.toString().matches(".+(?<!\\\\)[\\?].+")) {
             throw new ParseException("Error! component cannot contain embedded ?: " + svalue, 0);
           }
         }
@@ -229,10 +248,8 @@ public class WellFormedName {
         throw new ParseException("Error! component cannot be quoted hyphen: " + svalue, 0);
       }
       // part must be a, o, or h
-      if (Attribute.PART.equals(attribute)) {
-        if (!svalue.equals("a") && !svalue.equals("o") && !svalue.equals("h")) {
-          throw new ParseException("Error! part component must be one of the following: 'a', 'o', 'h': " + svalue, 0);
-        }
+      if (Attribute.PART.equals(attribute) && !svalue.equals("a") && !svalue.equals("o") && !svalue.equals("h")) {
+        throw new ParseException("Error! part component must be one of the following: 'a', 'o', 'h': " + svalue, 0);
       }
       value = svalue;
     }
@@ -241,8 +258,9 @@ public class WellFormedName {
   }
 
   /**
+   * Get the string representation of this {@link WellFormedName}.
    * 
-   * @return String representation of the WellFormedName
+   * @return the string representation of the WellFormedName
    */
   @Override
   public String toString() {
@@ -250,13 +268,13 @@ public class WellFormedName {
     for (Attribute attr : Attribute.values()) {
       sb.append(attr.name().toLowerCase());
       sb.append("=");
-      Object o = wfn.get(attr);
-      if (o instanceof LogicalValue) {
-        sb.append(o);
+      Object obj = wfn.get(attr);
+      if (obj instanceof LogicalValue) {
+        sb.append(obj);
         sb.append(", ");
       } else {
         sb.append("\"");
-        sb.append(o);
+        sb.append(obj);
         sb.append("\", ");
       }
     }

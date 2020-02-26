@@ -24,6 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 // Copyright (c) 2011, The MITRE Corporation
+
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are
@@ -51,25 +52,37 @@
 package gov.nist.secauto.cpe.naming.util;
 
 import gov.nist.secauto.cpe.common.WellFormedName;
-import gov.nist.secauto.cpe.naming.CPENameBinder;
 import gov.nist.secauto.cpe.naming.CPENameUnbinder;
 
 import java.text.ParseException;
 
 /**
- * A concrete implementation of a formatted string unbound to a WellFormedName.
+ * A concrete implementation of a formatted string unbound to a {@link WellFormedName}.
  */
 public class CPEFormattedStringName extends AbstractCPEName {
 
+  /**
+   * Constructs a formatted string bound CPE name based on the provided formatted string.
+   * 
+   * @param formattedString
+   *          the formatted string
+   * @throws ParseException
+   *           if the formatted string is not valid
+   */
   public CPEFormattedStringName(String formattedString) throws ParseException {
     super(CPENameUnbinder.unbindFS(formattedString));
   }
 
   /**
-   * @return the {@link WellFormedName} bound to a formatted string
+   * Gets the underlying {@link WellFormedName} as a formatted string.
+   *
+   * @return the {@link WellFormedName} as a CPE formatted string
+   * 
+   * @see #toFormattedString()
    */
+  @Override
   public String toString() {
-    return CPENameBinder.bindToFS(getWellFormedName());
+    return toFormattedString();
   }
 
 }

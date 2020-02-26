@@ -24,6 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 // Copyright (c) 2011, The MITRE Corporation
+
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are
@@ -56,7 +57,9 @@ import java.text.ParseException;
  * A collection of utility functions for use with the gov.nist.secauto.cpe.matching and
  * gov.nist.secauto.cpe.naming packages.
  * 
- * See {@link <a href="http://cpe.mitre.org">cpe.mitre.org</a>} for more information.
+ * @see <a href=
+ *      "https://csrc.nist.gov/projects/security-content-automation-protocol/specifications/cpe/">CPE
+ *      Specifications</a>
  * 
  * @author <a href="mailto:jkraunelis@mitre.org">Joshua Kraunelis</a>
  * @author <a href="mailto:david.waltermire@nist.gov">David Waltermire</a>
@@ -81,54 +84,54 @@ public class Utilities {
   /**
    * Extracts the characters between b and e, from the string s.
    * 
-   * @param s
+   * @param str
    *          the string which the substring should be extracted from
-   * @param b
-   *          beginning index
-   * @param e
-   *          ending index
-   * @return the characters between index b and index e
+   * @param begin
+   *          beginning index, inclusive
+   * @param end
+   *          ending index, exclusive
+   * @return the characters between index begin and index end
    */
-  public static String substr(String s, int b, int e) {
-    return s.substring(b, e);
+  public static String substr(String str, int begin, int end) {
+    return str.substring(begin, end);
   }
 
   /**
    * Returns the number of characters in the given string.
    * 
-   * @param s
+   * @param str
    *          the string
-   * @return the number of characters in s
+   * @return the number of characters in the string
    */
-  public static int strlen(String s) {
-    return s.length();
+  public static int strlen(String str) {
+    return str.length();
   }
 
   /**
    * Searches a string for a character starting at a given offset. Returns the offset of the character
    * if found, -1 if not found.
    * 
-   * @param s
+   * @param str
    *          string to be searched
    * @param chr
    *          character to search for
-   * @param off
+   * @param offset
    *          offset to start at
    * @return the integer offset of the character, or -1
    */
-  public static int strchr(String s, String chr, int off) {
-    return s.indexOf(chr, off);
+  public static int strchr(String str, int chr, int offset) {
+    return str.indexOf(chr, offset);
   }
 
   /**
    * Converts all alphabetic characters in a String to lowercase.
    * 
-   * @param s
+   * @param str
    *          string to convert to lowercase
-   * @return lowercase version of s
+   * @return lowercase version of str
    */
-  public static String toLowercase(String s) {
-    return s.toLowerCase();
+  public static String toLowercase(String str) {
+    return str.toLowerCase();
   }
 
   /**
@@ -138,23 +141,24 @@ public class Utilities {
    *          String to search.
    * @param str2
    *          String to search for.
-   * @param off
+   * @param offset
    *          Integer offset or -1 if not found.
+   * @return the position of the first occurrence of str2, or -1 if the string was not found
    */
-  public static int indexOf(String str1, String str2, int off) {
-    return str1.indexOf(str2, off);
+  public static int indexOf(String str1, String str2, int offset) {
+    return str1.indexOf(str2, offset);
   }
 
   /**
-   * Searches string for special characters * and ?
+   * Searches string for special characters * and ?.
    * 
-   * @param string
+   * @param str
    *          String to be searched
-   * @return true if string contains wildcard, false otherwise
+   * @return {@code true} if string contains a wildcard, or {@code false} otherwise
    */
-  public static boolean containsWildcards(String string) {
-    if (string.contains("*") || string.contains("?")) {
-      if (!(string.contains("\\"))) {
+  public static boolean containsWildcards(String str) {
+    if (str.contains("*") || str.contains("?")) {
+      if (!(str.contains("\\"))) {
         return true;
       }
       return false;
@@ -163,11 +167,11 @@ public class Utilities {
   }
 
   /**
-   * Checks if given number is even or not
+   * Checks if given number is even or not.
    * 
    * @param num
    *          number to check
-   * @return true if number is even, false if not
+   * @return {@code true} if number is even, {@code false} if not
    */
   public static boolean isEvenNumber(int num) {
     if (num % 2 == 0) {
@@ -178,31 +182,32 @@ public class Utilities {
   }
 
   /**
-   * Counts the number of escape characters in the string beginning and ending at the given indices
+   * Counts the number of escape characters in the string beginning and ending at the given indices.
    * 
    * @param str
    *          string to search
    * @param start
-   *          beginning index
+   *          beginning index, inclusive
    * @param end
-   *          ending index
+   *          ending index, exclusive
    * @return number of escape characters in string
    */
   public static int countEscapeCharacters(String str, int start, int end) {
     int result = 0;
     boolean active = false;
-    int i = 0;
-    while (i < end) {
-      if (active && (i >= start)) {
+    int pos = 0;
+    while (pos < end) {
+      active = !active && str.charAt(pos) == '\\';
+      if (active && (pos >= start)) {
         result = result + 1;
       }
-      i = i + 1;
+      pos = pos + 1;
     }
     return result;
   }
 
   /**
-   * Searches a string for the first unescaped colon and returns the index of that colon
+   * Searches a string for the first unescaped colon and returns the index of that colon.
    * 
    * @param str
    *          string to search
@@ -210,113 +215,123 @@ public class Utilities {
    */
   public static int getUnescapedColonIndex(String str) {
     boolean found = false;
-    int colon_idx = 0;
-    int start_idx = 0;
+    int colonIndex = 0;
+    int startIndex = 0;
     // Find the first non-escaped colon.
     while (!found) {
-      colon_idx = str.indexOf(":", start_idx + 1);
+      colonIndex = str.indexOf(':', startIndex + 1);
       // If no colon is found, return 0.
-      if (colon_idx == -1) {
+      if (colonIndex == -1) {
         return 0;
       }
       // Peek at character before colon.
-      if ((str.substring(colon_idx - 1, colon_idx)).equals("\\")) {
+      if ((str.substring(colonIndex - 1, colonIndex)).equals("\\")) {
         // If colon is escaped, keep looking.
-        start_idx = colon_idx;
+        startIndex = colonIndex;
       } else {
         found = true;
       }
     }
-    return colon_idx;
+    return colonIndex;
   }
 
   /**
-   * Returns true if the string contains only alphanumeric characters or the underscore character,
-   * false otherwise.
+   * Determines if the string contains only alphanumeric characters or the underscore character.
    * 
-   * @param c
+   * @param str
    *          the string in question
-   * @return true if c is alphanumeric or underscore, false if not
+   * @return {@code true} if c is alphanumeric or underscore, or {@code false} otherwise
    */
-  public static boolean isAlphanum(String c) {
-    if (c.matches("[a-zA-Z0-9]") || c.equals("_")) {
+  public static boolean isAlphanum(String str) {
+    if (str.matches("[a-zA-Z0-9]") || str.equals("_")) {
       return true;
     }
     return false;
   }
 
   /**
-   * Returns a copy of the given string in reverse order
+   * Returns a copy of the given string in reverse order.
    * 
-   * @param s
+   * @param str
    *          the string to be reversed
    * @return a reversed copy of s
    */
-  public static String reverse(String s) {
-    return new StringBuffer(s).reverse().toString();
+  public static String reverse(String str) {
+    return new StringBuffer(str).reverse().toString();
   }
 
   /**
    * This function is not part of the reference implementation pseudo code found in the CPE 2.3
-   * specification. It enforces two rules in the specification: URI must start with the characters
-   * "cpe:/" A URI may not contain more than 7 components If either rule is violated, a ParseException
-   * is thrown.
+   * specification. It enforces two rules in the specification: 1) a CPE URI must start with the
+   * characters "cpe:/". 2) A URI may not contain more than 7 components. If either rule is violated,
+   * a ParseException is thrown.
+   * 
+   * @param str
+   *          the potential CPE formatted string to validate
+   * @throws ParseException
+   *           if one of the rules for a CPE URI is violated
    */
-  public static void validateURI(String in) throws ParseException {
+  public static void validateURI(String str) throws ParseException {
     // make sure uri starts with cpe:/
-    if (!in.toLowerCase().startsWith("cpe:/")) {
-      throw new ParseException("Error: URI must start with 'cpe:/'.  Given: " + in, 0);
+    if (!str.toLowerCase().startsWith("cpe:/")) {
+      throw new ParseException("Error: URI must start with 'cpe:/'.  Given: " + str, 0);
     }
     // make sure uri doesn't contain more than 7 colons
     int count = 0;
-    for (int i = 0; i != in.length(); i++) {
-      if (in.charAt(i) == ':') {
+    for (int i = 0; i != str.length(); i++) {
+      if (str.charAt(i) == ':') {
         count++;
       }
     }
     if (count > 7) {
-      throw new ParseException("Error parsing URI.  Found " + (count - 7) + " extra components in: " + in, 0);
+      throw new ParseException("Error parsing URI.  Found " + (count - 7) + " extra components in: " + str, 0);
     }
   }
 
   /**
    * This function is not part of the reference implementation pseudo code found in the CPE 2.3
-   * specification. It enforces three rules found in the specification: Formatted string must start
-   * with the characters "cpe:2.3:" A formatted string must contain 11 components A formatted string
-   * must not contain empty components If any rule is violated, a ParseException is thrown.
+   * specification. It enforces three rules found in the specification: 1) A CPE formatted string must
+   * start with the characters "cpe:2.3:". 2) A formatted string must contain 11 components. 3) A
+   * formatted string must not contain empty components. If any rule is violated, a ParseException is
+   * thrown.
+   * 
+   * @param str
+   *          the potential CPE formatted string to validate
+   * @throws ParseException
+   *           if one of the rules for a CPE formatted string is violated
    */
-  public static void validateFS(String in) throws ParseException {
-    if (!in.toLowerCase().startsWith("cpe:2.3:")) {
-      throw new ParseException("Error: Formatted String must start with \"cpe:2.3\". Given: " + in, 0);
+  public static void validateFS(String str) throws ParseException {
+    if (!str.toLowerCase().startsWith("cpe:2.3:")) {
+      throw new ParseException("Error: Formatted String must start with \"cpe:2.3\". Given: " + str, 0);
     }
     // make sure fs contains exactly 12 unquoted colons
     int count = 0;
-    for (int i = 0; i != in.length(); i++) {
-      if (in.charAt(i) == ':') {
-        if (in.charAt(i - 1) != '\\') {
+    for (int i = 0; i != str.length(); i++) {
+      if (str.charAt(i) == ':') {
+        if (str.charAt(i - 1) != '\\') {
           count++;
         }
-        if ((i + 1) < in.length() && in.charAt(i + 1) == ':') {
+        if ((i + 1) < str.length() && str.charAt(i + 1) == ':') {
           throw new ParseException("Error parsing formatted string.  Found empty component", 0);
         }
       }
     }
     if (count > 12) {
       int extra = (count - 12);
-      StringBuffer s = new StringBuffer("Error parsing formatted string.  Found " + extra + " extra component");
+      StringBuffer msg = new StringBuffer("Error parsing formatted string.  Found " + extra + " extra component");
       if (extra > 1) {
-        s.append("s");
+        msg.append("s");
       }
-      s.append(" in: " + in);
-      throw new ParseException(s.toString(), 0);
+      msg.append(" in: " + str);
+      throw new ParseException(msg.toString(), 0);
     }
     if (count < 12) {
       int missing = (12 - count);
-      StringBuffer s = new StringBuffer("Error parsing formatted string. Missing " + missing + " component");
+      StringBuffer msg = new StringBuffer("Error parsing formatted string. Missing " + missing + " component");
       if (missing > 1) {
-        s.append("s");
+        msg.append("s");
       }
-      throw new ParseException(s.toString(), 0);
+      throw new ParseException(msg.toString(), 0);
     }
   }
 }

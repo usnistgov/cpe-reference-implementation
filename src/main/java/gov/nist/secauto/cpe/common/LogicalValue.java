@@ -24,6 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 // Copyright (c) 2011, The MITRE Corporation
+
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are
@@ -53,12 +54,18 @@ package gov.nist.secauto.cpe.common;
 /**
  * This class represents a Logical Value.
  * 
- * See {@link <a href="http://cpe.mitre.org">cpe.mitre.org</a>} for more information.
+ * @see <a href= "https://doi.org/10.6028/NIST.IR.7695">NISTIR 7695 Section 5.3.1</a>
  * 
  * @author <a href="mailto:jkraunelis@mitre.org">Joshua Kraunelis</a>
  * @author <a href="mailto:david.waltermire@nist.gov">David Waltermire</a>
  */
 public enum LogicalValue {
+  /**
+   * Indicates no restrictions on acceptable values for the associated attribute.
+   */
   ANY,
+  /**
+   * Indicates that there is no legal or meaningful value for the associated attribute.
+   */
   NA;
 }
