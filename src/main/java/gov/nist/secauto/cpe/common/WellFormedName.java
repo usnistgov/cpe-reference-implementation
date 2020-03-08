@@ -154,7 +154,7 @@ public class WellFormedName {
    * 
    * @param attribute
    *          String representing the component value to get
-   * @return the String value of the given component, or default value {@link LogicalValue.ANY} if the
+   * @return the String value of the given component, or default value {@link LogicalValue#ANY} if the
    *         component does not exist
    */
   public Object get(Attribute attribute) {

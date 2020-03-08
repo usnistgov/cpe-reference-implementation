@@ -79,7 +79,8 @@ public class CPENameUnbinder {
    * @param uri
    *          String representing the URI to be unbound
    * @return WellFormedName representing the unbound URI
-   * @throws ParseException if the provided uri is invalid
+   * @throws ParseException
+   *           if the provided uri is invalid
    */
   public static WellFormedName unbindURI(String uri) throws ParseException {
     // Validate the URI
