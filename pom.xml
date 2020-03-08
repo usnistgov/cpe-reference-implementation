@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>15-SNAPSHOT</version>
+		<version>16-SNAPSHOT</version>
 	</parent>
 
 	<groupId>gov.nist.secauto.cpe</groupId>
@@ -13,14 +13,74 @@
 
 	<packaging>jar</packaging>
 
-	<name>CPE Reference Implementation</name>
-	<url>https://subversion.nist.gov/external1/NVD/mitre-cpe/trunk</url>
+	<name>CPE 2.3 Reference Implementation</name>
+	<description>A CPE 2.3 reference implementation supporting the creation and use of CPE Names using the Java programming language.</description>
+	<url>${site.url}</url>
+
+	<issueManagement>
+		<url>${issueManagement.url}</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
 
 	<scm>
-		<connection>scm:svn:https://subversion.nist.gov/external1/NVD/mitre-cpe/trunk</connection>
-		<developerConnection>scm:svn:https://subversion.nist.gov/external1/NVD/mitre-cpe/trunk</developerConnection>
-		<url>https://subversion.nist.gov/external1/NVD/mitre-cpe/trunk</url>
+		<url>${scm.url}/tree/master</url>
+		<connection>scm:git:ssh://git@github.com/usnistgov/cpe-reference-implementation.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/usnistgov/cpe-reference-implementation.git</developerConnection>
+		<tag>HEAD</tag>
 	</scm>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+		<site>
+			<id>site_scm</id>
+			<url>${site.url}</url>
+		</site>
+
+	</distributionManagement>
+
+	<licenses>
+		<license>
+			<name>NIST License</name>
+			<url>https://www.nist.gov/director/licensing</url>
+			<distribution>repo</distribution>
+			<comments>NIST software License</comments>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>david.waltermire@nist.gov</id>
+			<name>David Waltermire</name>
+			<email>david.waltermire@nist.gov</email>
+			<organization>National Institute of Standards and Technology</organization>
+			<roles>
+				<role>maintainer</role>
+				<role>developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>jkraunelis@mitre.org</id>
+			<name>Joshua Kraunelis</name>
+			<email>jkraunelis@mitre.org</email>
+			<organization>The MITRE Corporation</organization>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<properties>
+		<site.url>https://pages.nist.gov/cpe-reference-implementation</site.url>
+		<scm.url>https://github.com/usnistgov/cpe-reference-implementation</scm.url>
+		<issueManagement.url>https://github.com/usnistgov/cpe-reference-implementation/issues</issueManagement.url>
+	</properties>
 
 	<dependencies>
 		<dependency>
