@@ -65,17 +65,18 @@
 				<role>developer</role>
 			</roles>
 		</developer>
-		<developer>
-			<id>jkraunelis@mitre.org</id>
+	</developers>
+
+	<contributors>
+		<contributor>
 			<name>Joshua Kraunelis</name>
 			<email>jkraunelis@mitre.org</email>
 			<organization>The MITRE Corporation</organization>
 			<roles>
-				<role>developer</role>
+				<role>former developer</role>
 			</roles>
-		</developer>
-	</developers>
-
+		</contributor>
+	</contributors>
 	<properties>
 		<site.url>https://pages.nist.gov/cpe-reference-implementation</site.url>
 		<scm.url>https://github.com/usnistgov/cpe-reference-implementation</scm.url>

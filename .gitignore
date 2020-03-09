@@ -6,3 +6,4 @@
 .pmd
 .pmdruleset.xml
 /target/
+/velocity.log

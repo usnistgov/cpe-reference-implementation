@@ -1,0 +1,6 @@
+
+This Common Platform Enumeration (CPE) Reference Implementation demonstrates the usability of the CPE Naming and Matching Algorithms, as described in the [CPE Naming Specification](https://csrc.nist.gov/publications/detail/nistir/7695/final) version 2.3 and [CPE Matching Specification](https://csrc.nist.gov/publications/detail/nistir/7696/final) version 2.3. 
+
+This code was [originally developed](https://cpe.mitre.org/specification/#downloads) by the MITRE Corporation and is now maintained by NIST.
+
+For information about the Common Platform Enumeration standard, please visit the [project site](https://csrc.nist.gov/projects/security-content-automation-protocol/specifications/cpe/). 

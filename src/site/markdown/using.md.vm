@@ -1,10 +1,15 @@
-# CPE Reference Implementation
 
-This Common Platform Enumeration (CPE) Reference Implementation demonstrates the usability of the CPE Naming and Matching Algorithms, as described in the [CPE Naming Specification](https://csrc.nist.gov/publications/detail/nistir/7695/final) version 2.3 and [CPE Matching Specification](https://csrc.nist.gov/publications/detail/nistir/7696/final) version 2.3. 
+# Using the CPE Reference implementation
 
-This code was [orginally developed](https://cpe.mitre.org/specification/#downloads) by the MITRE Corporation and is now maintained by NIST.
+The following dependency can be added to your POM to use this library.
 
-For information about the Common Platform Enumeration standard, please visit the [project site](https://csrc.nist.gov/projects/security-content-automation-protocol/specifications/cpe/). 
+```xml
+<dependency>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
+  <version>${project.version}</version>
+</dependency>
+```
 
 The following source packages are included in this release:
 
@@ -26,5 +31,3 @@ The following source packages are included in this release:
    This package contains the following class:
 
    - gov.nist.secauto.cpe.matching.CPENameMatcher: provides methods to test a match between two different CPE names
-
-
