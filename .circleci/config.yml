@@ -4,7 +4,6 @@ executors:
   maven-executor:
     docker:
       - image: circleci/openjdk:8-jdk
-    working_directory: java
 commands:
   configure-gpg:
     steps:
