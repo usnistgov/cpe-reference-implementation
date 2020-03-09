@@ -85,6 +85,9 @@ jobs:
           command: |
             mvn -Preporting -Prelease package site site:stage
       - save-maven-cache
+      - add_ssh_keys:
+          fingerprints:
+            - "9e:e0:a0:10:f3:b7:3e:9c:c3:8c:05:47:22:5a:75:f7"
       - run:
           name: Run deploy script
           command: |
@@ -109,6 +112,15 @@ workflows:
             # only act on version tags
             tags:
               only: /v[0-9]+(\.[0-9]+)*.*/
+      - deploy-site:
+          requires:
+            - deploy-releases
+          filters:
+            branches:
+              ignore: /.*/
+            # only act on version tags
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*.*/
   snapshots:
     jobs:
       - build-and-test:
@@ -121,7 +133,4 @@ workflows:
           filters:
             branches:
               only: master
-      - deploy-site:
-          requires:
-          - deploy-snapshot
 

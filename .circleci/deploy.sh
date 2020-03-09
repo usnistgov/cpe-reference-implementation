@@ -22,8 +22,8 @@ Options:
 
 
 run_build() {
-  echo "Running Hugo"
-  hugo -v --debug --minify
+  echo "Running Maven"
+  mvn -Preporting -Prelease package site site:stage
 }
 
 parse_args() {
