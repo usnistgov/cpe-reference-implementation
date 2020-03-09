@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>16-SNAPSHOT</version>
+		<version>16</version>
 	</parent>
 
 	<groupId>gov.nist.secauto.cpe</groupId>
@@ -48,7 +48,7 @@
 		</repository>
 		<site>
 			<id>site_scm</id>
-			<url>${site.url}</url>
+			<url>${project.baseUri}</url>
 		</site>
 	</distributionManagement>
 
