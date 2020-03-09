@@ -1,4 +1,5 @@
 # CPE Reference Implementation
+[![Gitter](https://img.shields.io/gitter/room/usnistgov-cpe-ri/community.svg?style=flat-square)](https://gitter.im/usnistgov-cpe-ri/community)
 
 This Common Platform Enumeration (CPE) Reference Implementation demonstrates the usability of the CPE Naming and Matching Algorithms, as described in the [CPE Naming Specification](https://csrc.nist.gov/publications/detail/nistir/7695/final) version 2.3 and [CPE Matching Specification](https://csrc.nist.gov/publications/detail/nistir/7696/final) version 2.3. 
 
