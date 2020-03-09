@@ -36,6 +36,7 @@ jobs:
       - restore-maven-cache
       - configure-gpg
       - run:
+          name: Build and test Java code
           command: mvn -Prelease -Pallow-snapshots verify
       - save-maven-cache
       - persist_to_workspace:
@@ -88,7 +89,7 @@ jobs:
           name: Run deploy script
           command: |
             touch target/staging/.nojekyll
-            bash .circlci/deploy.sh --push-only -v -m "Deploying website [ci deploy skip]"
+            bash .circleci/deploy.sh --push-only -v -m "Deploying website [ci deploy skip]"
 workflows:
   releases:
     jobs:
