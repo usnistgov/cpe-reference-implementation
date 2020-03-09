@@ -9,7 +9,7 @@
 
 	<groupId>gov.nist.secauto.cpe</groupId>
 	<artifactId>cpe-reference-implementation</artifactId>
-	<version>1.0.8</version>
+	<version>1.0.9-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
@@ -32,7 +32,7 @@
 		<url>${scm.url}/tree/master</url>
 		<connection>scm:git:ssh://git@github.com/usnistgov/cpe-reference-implementation.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/usnistgov/cpe-reference-implementation.git</developerConnection>
-		<tag>v1.0.8</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<distributionManagement>
