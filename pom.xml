@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -42,7 +44,6 @@
 			<id>site_scm</id>
 			<url>${site.url}</url>
 		</site>
-
 	</distributionManagement>
 
 	<licenses>
@@ -77,6 +78,7 @@
 			</roles>
 		</contributor>
 	</contributors>
+
 	<properties>
 		<site.url>https://pages.nist.gov/cpe-reference-implementation</site.url>
 		<scm.url>https://github.com/usnistgov/cpe-reference-implementation</scm.url>
@@ -97,4 +99,22 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>allow-snapshots</id>
+			<repositories>
+				<repository>
+					<id>oss.sonatype.org-snapshot</id>
+					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+					<releases>
+						<enabled>false</enabled>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+		</profile>
+	</profiles>
 </project>

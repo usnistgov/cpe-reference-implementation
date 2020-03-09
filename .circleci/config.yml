@@ -36,7 +36,7 @@ jobs:
       - restore-maven-cache
       - configure-gpg
       - run:
-          command: mvn -Prelease verify
+          command: mvn -Prelease -Pallow-snapshots verify
       - save-maven-cache
       - persist_to_workspace:
           root: .
