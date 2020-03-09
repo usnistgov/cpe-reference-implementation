@@ -19,15 +19,15 @@ The following source packages are included in this release:
 
    - [gov.nist.secauto.cpe.common.WellFormedName](apidocs/gov/nist/secauto/cpe/common/WellFormedName.html): provides methods to construct an unbound CPE name
 
-- `gov.nist.secauto.cpe.naming`: contains classes related to the CPE naming algorithms
+- [gov.nist.secauto.cpe.naming](apidocs/gov/nist/secauto/cpe/naming/package-summary.html): contains classes related to the CPE naming algorithms
 
    This package contains the following classes:
 
-   - `gov.nist.secauto.cpe.naming.CPENameBinder`: provides methods to bind a WellFormedName to the CPE URI and formatted string forms
-   - `gov.nist.secauto.cpe.naming.CPENameUnbinder`: provides methods to unbind a CPE URI or formatted string into a WellFormedName
+   - [gov.nist.secauto.cpe.naming.CPENameBinder](apidocs/gov/nist/secauto/cpe/naming/CPENameBinder.html): provides methods to bind a WellFormedName to the CPE URI and formatted string forms
+   - [gov.nist.secauto.cpe.naming.CPENameUnbinder](apidocs/gov/nist/secauto/cpe/naming/CPENameUnbinder.html): provides methods to unbind a CPE URI or formatted string into a WellFormedName
 
-- `gov.nist.secauto.cpe.matching`: contains classes related to the CPE matching algorithm
+- [gov.nist.secauto.cpe.matching](apidocs/gov/nist/secauto/cpe/matching/package-summary.html): contains classes related to the CPE matching algorithm
 
    This package contains the following class:
 
-   - `gov.nist.secauto.cpe.matching.CPENameMatcher`: provides methods to test a match between two different CPE names
+   - [gov.nist.secauto.cpe.matching.CPENameMatcher](apidocs/gov/nist/secauto/cpe/matching/CPENameMatcher.html): provides methods to test a match between two different CPE names
