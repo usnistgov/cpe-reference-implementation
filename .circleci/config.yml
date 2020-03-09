@@ -114,7 +114,7 @@ workflows:
               only: /v[0-9]+(\.[0-9]+)*.*/
       - deploy-site:
           requires:
-            - deploy-releases
+            - deploy-release
           filters:
             branches:
               ignore: /.*/
