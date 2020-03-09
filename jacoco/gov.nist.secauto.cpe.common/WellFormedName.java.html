@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WellFormedName.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">CPE 2.3 Reference Implementation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.cpe.common</a> &gt; <span class="el_source">WellFormedName.java</span></div><h1>WellFormedName.java</h1><pre class="source lang-java linenums">/**
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+// Copyright (c) 2011, The MITRE Corporation
+
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, are
+// permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, this list
+//      of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, this
+//      list of conditions and the following disclaimer in the documentation and/or other
+//      materials provided with the distribution.
+//    * Neither the name of The MITRE Corporation nor the names of its contributors may be
+//      used to endorse or promote products derived from this software without specific
+//      prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+// OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+// SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+// OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+// TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+// EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+package gov.nist.secauto.cpe.common;
+
+import java.text.ParseException;
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * The WellFormedName class represents a Well Formed Name, as defined in the CPE Specification
+ * version 2.3.
+ * 
+ * @see &lt;a href= &quot;https://doi.org/10.6028/NIST.IR.7695&quot;&gt;NISTIR 7695 Section 5&lt;/a&gt;
+ * 
+ * @author &lt;a href=&quot;mailto:jkraunelis@mitre.org&quot;&gt;Joshua Kraunelis&lt;/a&gt;
+ * @author &lt;a href=&quot;mailto:david.waltermire@nist.gov&quot;&gt;David Waltermire&lt;/a&gt;
+ */
+public class WellFormedName {
+<span class="fc" id="L68">  public enum Attribute {</span>
+
+<span class="fc" id="L70">    PART,</span>
+<span class="fc" id="L71">    VENDOR,</span>
+<span class="fc" id="L72">    PRODUCT,</span>
+<span class="fc" id="L73">    VERSION,</span>
+<span class="fc" id="L74">    UPDATE,</span>
+<span class="fc" id="L75">    EDITION,</span>
+<span class="fc" id="L76">    LANGUAGE,</span>
+<span class="fc" id="L77">    SW_EDITION,</span>
+<span class="fc" id="L78">    TARGET_SW,</span>
+<span class="fc" id="L79">    TARGET_HW,</span>
+<span class="fc" id="L80">    OTHER;</span>
+  }
+
+  // Underlying wfn representation.
+  // String -&gt; String.
+<span class="fc" id="L85">  private Map&lt;Attribute, Object&gt; wfn = new EnumMap&lt;Attribute, Object&gt;(Attribute.class);</span>
+
+  /**
+   * Constructs a new WellFormedName object, with all components set to the default value &quot;ANY&quot;.
+   * 
+   * @throws RuntimeException
+   *           if this implementation is incorrect
+   */
+<span class="fc" id="L93">  public WellFormedName() {</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">    for (Attribute a : Attribute.values()) {</span>
+      // don't set part to ANY
+<span class="fc bfc" id="L96" title="All 2 branches covered.">      if (!Attribute.PART.equals(a)) {</span>
+        try {
+<span class="fc" id="L98">          set(a, LogicalValue.ANY);</span>
+<span class="nc" id="L99">        } catch (ParseException ex) {</span>
+          // the assignment of ANY is a valid value, so this should never happen
+<span class="nc" id="L101">          throw new RuntimeException(ex);</span>
+<span class="fc" id="L102">        }</span>
+      }
+    }
+<span class="fc" id="L105">  }</span>
+
+  /**
+   * Constructs a new WellFormedName object, setting each component to the given parameter value. If a
+   * parameter is null, the component is set to the default value &quot;ANY&quot;.
+   * 
+   * @param part
+   *          string representing the part component
+   * @param vendor
+   *          string representing the vendor component
+   * @param product
+   *          string representing the product component
+   * @param version
+   *          string representing the version component
+   * @param update
+   *          string representing the update component
+   * @param edition
+   *          string representing the edition component
+   * @param language
+   *          string representing the language component
+   * @param swEdition
+   *          string representing the sw_edition component
+   * @param targetSoftware
+   *          string representing the target_sw component
+   * @param targetHardware
+   *          string representing the target_hw component
+   * @param other
+   *          string representing the other component
+   * @throws ParseException
+   *           if any of the provided values are invalid
+   */
+  public WellFormedName(Object part, Object vendor, Object product, Object version, Object update, Object edition,
+      Object language, Object swEdition, Object targetSoftware, Object targetHardware, Object other)
+<span class="fc" id="L138">      throws ParseException {</span>
+<span class="fc" id="L139">    set(Attribute.PART, part);</span>
+<span class="fc" id="L140">    set(Attribute.VENDOR, vendor);</span>
+<span class="fc" id="L141">    set(Attribute.PRODUCT, product);</span>
+<span class="fc" id="L142">    set(Attribute.VERSION, version);</span>
+<span class="fc" id="L143">    set(Attribute.UPDATE, update);</span>
+<span class="fc" id="L144">    set(Attribute.EDITION, edition);</span>
+<span class="fc" id="L145">    set(Attribute.LANGUAGE, language);</span>
+<span class="fc" id="L146">    set(Attribute.SW_EDITION, swEdition);</span>
+<span class="fc" id="L147">    set(Attribute.TARGET_SW, targetSoftware);</span>
+<span class="fc" id="L148">    set(Attribute.TARGET_HW, targetHardware);</span>
+<span class="fc" id="L149">    set(Attribute.OTHER, other);</span>
+<span class="fc" id="L150">  }</span>
+
+  /**
+   * get the value of the provided attribute.
+   * 
+   * @param attribute
+   *          String representing the component value to get
+   * @return the String value of the given component, or default value {@link LogicalValue#ANY} if the
+   *         component does not exist
+   */
+  public Object get(Attribute attribute) {
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">    if (this.wfn.containsKey(attribute)) {</span>
+<span class="fc" id="L162">      return this.wfn.get(attribute);</span>
+    } else {
+<span class="nc" id="L164">      return LogicalValue.ANY;</span>
+    }
+  }
+
+  /**
+   * Sets the given attribute to value, if the attribute is in the list of permissible components.
+   * 
+   * @param attribute
+   *          enumerated value representing the component to set
+   * @param value
+   *          Object representing the value of the given component
+   * @throws ParseException
+   *           if the provided value is invalid
+   */
+  public final void set(Attribute attribute, Object value) throws ParseException {
+    // check to see if we're setting a LogicalValue ANY or NA
+<span class="fc bfc" id="L180" title="All 2 branches covered.">    if (value instanceof LogicalValue) {</span>
+      // don't allow logical values in part component
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">      if (Attribute.PART.equals(attribute)) {</span>
+<span class="nc" id="L183">        throw new ParseException(&quot;Error! part component cannot be a logical value&quot;, 0);</span>
+      }
+<span class="pc bpc" id="L185" title="1 of 4 branches missed.">    } else if (value == null || ((String) value).equals(&quot;&quot;)) {</span>
+      // if value is null or blank, set attribute to default logical ANY
+<span class="fc" id="L187">      value = LogicalValue.ANY;</span>
+    } else {
+<span class="fc" id="L189">      String svalue = (String) value;</span>
+      // Reg exs
+      // check for printable characters - no control characters
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">      if (!svalue.matches(&quot;\\p{Print}*&quot;)) {</span>
+<span class="nc" id="L193">        throw new ParseException(&quot;Error! encountered non printable character in: &quot; + svalue, 0);</span>
+      }
+      // svalue has whitespace
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">      if (svalue.matches(&quot;.*\\s+.*&quot;)) {</span>
+<span class="nc" id="L197">        throw new ParseException(&quot;Error! component cannot contain whitespace: &quot; + svalue, 0);</span>
+      }
+      // svalue has more than one unquoted star
+<span class="pc bpc" id="L200" title="2 of 4 branches missed.">      if (svalue.matches(&quot;\\*{2,}.*&quot;) || svalue.matches(&quot;.*\\*{2,}&quot;)) {</span>
+<span class="nc" id="L201">        throw new ParseException(&quot;Error! component cannot contain more than one * in sequence: &quot; + svalue, 0);</span>
+      }
+      // svalue has unquoted punctuation embedded
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">      if (svalue.matches(</span>
+          &quot;.*(?&lt;!\\\\)[\\!\\\&quot;\\#\\$\\%\\&amp;\\\'\\(\\)\\+\\,\\.\\/\\:\\;\\&lt;\\=\\&gt;\\@\\[\\]\\^\\`\\{\\|\\}\\~\\-].*&quot;)) {
+<span class="nc" id="L206">        throw new ParseException(&quot;Error! component cannot contain unquoted punctuation: &quot; + svalue, 0);</span>
+      }
+      // svalue has an unquoted *
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">      if (svalue.matches(&quot;.+(?&lt;!\\\\)[\\*].+&quot;)) {</span>
+<span class="nc" id="L210">        throw new ParseException(&quot;Error! component cannot contain embedded *: &quot; + svalue, 0);</span>
+      }
+      // svalue has embedded unquoted ?
+      // this will catch a single unquoted ?, so make sure we deal with that
+      // if
+      // (svalue.matches(&quot;\\?*[\\p{Graph}&amp;&amp;[^\\?]]*(?&lt;!\\\\)[\\?][\\p{Graph}&amp;&amp;[^\\?]]*\\?*&quot;))
+      // {
+<span class="fc bfc" id="L217" title="All 2 branches covered.">      if (svalue.contains(&quot;?&quot;)) {</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">        if (svalue.equals(&quot;?&quot;)) {</span>
+          // single ? is valid
+<span class="fc" id="L220">          value = svalue;</span>
+        } else {
+          // remove leading and trailing ?s
+<span class="fc" id="L223">          StringBuffer buf = new StringBuffer(svalue);</span>
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">          while (buf.indexOf(&quot;?&quot;) == 0) {</span>
+            // remove all leading ?'s
+<span class="nc" id="L226">            buf.deleteCharAt(0);</span>
+          }
+<span class="fc" id="L228">          buf = buf.reverse();</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">          while (buf.indexOf(&quot;?&quot;) == 0) {</span>
+            // remove all trailing ?'s (string has been reversed)
+<span class="fc" id="L231">            buf.deleteCharAt(0);</span>
+          }
+          // back to normal
+<span class="fc" id="L234">          buf = buf.reverse();</span>
+          // after leading and trailing ?s are removed, check if value
+          // contains unquoted ?s
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">          if (buf.toString().matches(&quot;.+(?&lt;!\\\\)[\\?].+&quot;)) {</span>
+<span class="nc" id="L238">            throw new ParseException(&quot;Error! component cannot contain embedded ?: &quot; + svalue, 0);</span>
+          }
+        }
+      }
+      // single asterisk is not allowed
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">      if (svalue.equals(&quot;*&quot;)) {</span>
+<span class="nc" id="L244">        throw new ParseException(&quot;Error! component cannot be a single *: &quot; + svalue, 0);</span>
+      }
+      // quoted hyphen not allowed by itself
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">      if (svalue.equals(&quot;-&quot;)) {</span>
+<span class="nc" id="L248">        throw new ParseException(&quot;Error! component cannot be quoted hyphen: &quot; + svalue, 0);</span>
+      }
+      // part must be a, o, or h
+<span class="pc bpc" id="L251" title="5 of 8 branches missed.">      if (Attribute.PART.equals(attribute) &amp;&amp; !svalue.equals(&quot;a&quot;) &amp;&amp; !svalue.equals(&quot;o&quot;) &amp;&amp; !svalue.equals(&quot;h&quot;)) {</span>
+<span class="nc" id="L252">        throw new ParseException(&quot;Error! part component must be one of the following: 'a', 'o', 'h': &quot; + svalue, 0);</span>
+      }
+<span class="fc" id="L254">      value = svalue;</span>
+    }
+    // should be good to go
+<span class="fc" id="L257">    this.wfn.put(attribute, value);</span>
+<span class="fc" id="L258">  }</span>
+
+  /**
+   * Get the string representation of this {@link WellFormedName}.
+   * 
+   * @return the string representation of the WellFormedName
+   */
+  @Override
+  public String toString() {
+<span class="nc" id="L267">    StringBuffer sb = new StringBuffer(&quot;wfn:[&quot;);</span>
+<span class="nc bnc" id="L268" title="All 2 branches missed.">    for (Attribute attr : Attribute.values()) {</span>
+<span class="nc" id="L269">      sb.append(attr.name().toLowerCase());</span>
+<span class="nc" id="L270">      sb.append(&quot;=&quot;);</span>
+<span class="nc" id="L271">      Object obj = wfn.get(attr);</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">      if (obj instanceof LogicalValue) {</span>
+<span class="nc" id="L273">        sb.append(obj);</span>
+<span class="nc" id="L274">        sb.append(&quot;, &quot;);</span>
+      } else {
+<span class="nc" id="L276">        sb.append(&quot;\&quot;&quot;);</span>
+<span class="nc" id="L277">        sb.append(obj);</span>
+<span class="nc" id="L278">        sb.append(&quot;\&quot;, &quot;);</span>
+      }
+    }
+<span class="nc" id="L281">    sb.deleteCharAt(sb.length() - 1);</span>
+<span class="nc" id="L282">    sb.deleteCharAt(sb.length() - 1);</span>
+<span class="nc" id="L283">    sb.append(&quot;]&quot;);</span>
+
+<span class="nc" id="L285">    return sb.toString();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

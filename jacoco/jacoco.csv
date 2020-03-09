@@ -1,0 +1,13 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+CPE 2.3 Reference Implementation,gov.nist.secauto.cpe.matching,Relation,0,54,0,0,0,6,0,1,0,1
+CPE 2.3 Reference Implementation,gov.nist.secauto.cpe.matching,CPENameMatcher,77,350,34,62,17,79,27,30,0,9
+CPE 2.3 Reference Implementation,gov.nist.secauto.cpe.naming.util,AbstractCPEName,21,0,0,0,7,0,5,0,5,0
+CPE 2.3 Reference Implementation,gov.nist.secauto.cpe.naming.util,CPEUriName,13,0,0,0,5,0,3,0,3,0
+CPE 2.3 Reference Implementation,gov.nist.secauto.cpe.naming.util,CPEFactory,20,0,2,0,5,0,2,0,1,0
+CPE 2.3 Reference Implementation,gov.nist.secauto.cpe.naming.util,CPEFormattedStringName,8,0,0,0,3,0,2,0,2,0
+CPE 2.3 Reference Implementation,gov.nist.secauto.cpe.naming,CPENameUnbinder,514,687,72,88,55,147,55,33,0,8
+CPE 2.3 Reference Implementation,gov.nist.secauto.cpe.naming,CPENameBinder,217,481,64,50,57,89,44,23,0,10
+CPE 2.3 Reference Implementation,gov.nist.secauto.cpe.common,LogicalValue,0,24,0,0,0,3,0,1,0,1
+CPE 2.3 Reference Implementation,gov.nist.secauto.cpe.common,WellFormedName.Attribute,0,114,0,0,0,12,0,1,0,1
+CPE 2.3 Reference Implementation,gov.nist.secauto.cpe.common,WellFormedName,225,206,22,30,29,48,19,12,1,4
+CPE 2.3 Reference Implementation,gov.nist.secauto.cpe.common,Utilities,142,226,19,39,21,53,17,27,1,14

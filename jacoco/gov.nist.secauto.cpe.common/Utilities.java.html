@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Utilities.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">CPE 2.3 Reference Implementation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.cpe.common</a> &gt; <span class="el_source">Utilities.java</span></div><h1>Utilities.java</h1><pre class="source lang-java linenums">/**
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+// Copyright (c) 2011, The MITRE Corporation
+
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, are
+// permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, this list
+//      of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, this
+//      list of conditions and the following disclaimer in the documentation and/or other
+//      materials provided with the distribution.
+//    * Neither the name of The MITRE Corporation nor the names of its contributors may be
+//      used to endorse or promote products derived from this software without specific
+//      prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+// OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+// SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+// OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+// TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+// EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+package gov.nist.secauto.cpe.common;
+
+import java.text.ParseException;
+
+/**
+ * A collection of utility functions for use with the gov.nist.secauto.cpe.matching and
+ * gov.nist.secauto.cpe.naming packages.
+ * 
+ * @see &lt;a href=
+ *      &quot;https://csrc.nist.gov/projects/security-content-automation-protocol/specifications/cpe/&quot;&gt;CPE
+ *      Specifications&lt;/a&gt;
+ * 
+ * @author &lt;a href=&quot;mailto:jkraunelis@mitre.org&quot;&gt;Joshua Kraunelis&lt;/a&gt;
+ * @author &lt;a href=&quot;mailto:david.waltermire@nist.gov&quot;&gt;David Waltermire&lt;/a&gt;
+ */
+<span class="nc" id="L67">public class Utilities {</span>
+
+  /**
+   * Concatenates an arbitrary number of strings, in the given order.
+   * 
+   * @param strings
+   *          strings to be concatenated
+   * @return a single string representing all the arguments, concatenated
+   */
+  public static String strcat(String... strings) {
+<span class="fc" id="L77">    StringBuilder retval = new StringBuilder();</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">    for (String s : strings) {</span>
+<span class="fc" id="L79">      retval.append(s);</span>
+    }
+<span class="fc" id="L81">    return retval.toString();</span>
+  }
+
+  /**
+   * Extracts the characters between b and e, from the string s.
+   * 
+   * @param str
+   *          the string which the substring should be extracted from
+   * @param begin
+   *          beginning index, inclusive
+   * @param end
+   *          ending index, exclusive
+   * @return the characters between index begin and index end
+   */
+  public static String substr(String str, int begin, int end) {
+<span class="fc" id="L96">    return str.substring(begin, end);</span>
+  }
+
+  /**
+   * Returns the number of characters in the given string.
+   * 
+   * @param str
+   *          the string
+   * @return the number of characters in the string
+   */
+  public static int strlen(String str) {
+<span class="fc" id="L107">    return str.length();</span>
+  }
+
+  /**
+   * Searches a string for a character starting at a given offset. Returns the offset of the character
+   * if found, -1 if not found.
+   * 
+   * @param str
+   *          string to be searched
+   * @param chr
+   *          character to search for
+   * @param offset
+   *          offset to start at
+   * @return the integer offset of the character, or -1
+   */
+  public static int strchr(String str, int chr, int offset) {
+<span class="fc" id="L123">    return str.indexOf(chr, offset);</span>
+  }
+
+  /**
+   * Converts all alphabetic characters in a String to lowercase.
+   * 
+   * @param str
+   *          string to convert to lowercase
+   * @return lowercase version of str
+   */
+  public static String toLowercase(String str) {
+<span class="fc" id="L134">    return str.toLowerCase();</span>
+  }
+
+  /**
+   * Searches a string for the first occurrence of another string, starting at a given offset.
+   * 
+   * @param str1
+   *          String to search.
+   * @param str2
+   *          String to search for.
+   * @param offset
+   *          Integer offset or -1 if not found.
+   * @return the position of the first occurrence of str2, or -1 if the string was not found
+   */
+  public static int indexOf(String str1, String str2, int offset) {
+<span class="fc" id="L149">    return str1.indexOf(str2, offset);</span>
+  }
+
+  /**
+   * Searches string for special characters * and ?.
+   * 
+   * @param str
+   *          String to be searched
+   * @return {@code true} if string contains a wildcard, or {@code false} otherwise
+   */
+  public static boolean containsWildcards(String str) {
+<span class="pc bpc" id="L160" title="2 of 4 branches missed.">    if (str.contains(&quot;*&quot;) || str.contains(&quot;?&quot;)) {</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">      if (!(str.contains(&quot;\\&quot;))) {</span>
+<span class="nc" id="L162">        return true;</span>
+      }
+<span class="nc" id="L164">      return false;</span>
+    }
+<span class="fc" id="L166">    return false;</span>
+  }
+
+  /**
+   * Checks if given number is even or not.
+   * 
+   * @param num
+   *          number to check
+   * @return {@code true} if number is even, {@code false} if not
+   */
+  public static boolean isEvenNumber(int num) {
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">    if (num % 2 == 0) {</span>
+<span class="fc" id="L178">      return true;</span>
+    } else {
+<span class="nc" id="L180">      return false;</span>
+    }
+  }
+
+  /**
+   * Counts the number of escape characters in the string beginning and ending at the given indices.
+   * 
+   * @param str
+   *          string to search
+   * @param start
+   *          beginning index, inclusive
+   * @param end
+   *          ending index, exclusive
+   * @return number of escape characters in string
+   */
+  public static int countEscapeCharacters(String str, int start, int end) {
+<span class="fc" id="L196">    int result = 0;</span>
+<span class="fc" id="L197">    boolean active = false;</span>
+<span class="fc" id="L198">    int pos = 0;</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">    while (pos &lt; end) {</span>
+<span class="fc bfc" id="L200" title="All 4 branches covered.">      active = !active &amp;&amp; str.charAt(pos) == '\\';</span>
+<span class="pc bpc" id="L201" title="1 of 4 branches missed.">      if (active &amp;&amp; (pos &gt;= start)) {</span>
+<span class="fc" id="L202">        result = result + 1;</span>
+      }
+<span class="fc" id="L204">      pos = pos + 1;</span>
+    }
+<span class="fc" id="L206">    return result;</span>
+  }
+
+  /**
+   * Searches a string for the first unescaped colon and returns the index of that colon.
+   * 
+   * @param str
+   *          string to search
+   * @return index of first unescaped colon, or 0 if not found
+   */
+  public static int getUnescapedColonIndex(String str) {
+<span class="fc" id="L217">    boolean found = false;</span>
+<span class="fc" id="L218">    int colonIndex = 0;</span>
+<span class="fc" id="L219">    int startIndex = 0;</span>
+    // Find the first non-escaped colon.
+<span class="fc bfc" id="L221" title="All 2 branches covered.">    while (!found) {</span>
+<span class="fc" id="L222">      colonIndex = str.indexOf(':', startIndex + 1);</span>
+      // If no colon is found, return 0.
+<span class="fc bfc" id="L224" title="All 2 branches covered.">      if (colonIndex == -1) {</span>
+<span class="fc" id="L225">        return 0;</span>
+      }
+      // Peek at character before colon.
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">      if ((str.substring(colonIndex - 1, colonIndex)).equals(&quot;\\&quot;)) {</span>
+        // If colon is escaped, keep looking.
+<span class="nc" id="L230">        startIndex = colonIndex;</span>
+      } else {
+<span class="fc" id="L232">        found = true;</span>
+      }
+    }
+<span class="fc" id="L235">    return colonIndex;</span>
+  }
+
+  /**
+   * Determines if the string contains only alphanumeric characters or the underscore character.
+   * 
+   * @param str
+   *          the string in question
+   * @return {@code true} if c is alphanumeric or underscore, or {@code false} otherwise
+   */
+  public static boolean isAlphanum(String str) {
+<span class="fc bfc" id="L246" title="All 4 branches covered.">    if (str.matches(&quot;[a-zA-Z0-9]&quot;) || str.equals(&quot;_&quot;)) {</span>
+<span class="fc" id="L247">      return true;</span>
+    }
+<span class="fc" id="L249">    return false;</span>
+  }
+
+  /**
+   * Returns a copy of the given string in reverse order.
+   * 
+   * @param str
+   *          the string to be reversed
+   * @return a reversed copy of s
+   */
+  public static String reverse(String str) {
+<span class="fc" id="L260">    return new StringBuffer(str).reverse().toString();</span>
+  }
+
+  /**
+   * This function is not part of the reference implementation pseudo code found in the CPE 2.3
+   * specification. It enforces two rules in the specification: 1) a CPE URI must start with the
+   * characters &quot;cpe:/&quot;. 2) A URI may not contain more than 7 components. If either rule is violated,
+   * a ParseException is thrown.
+   * 
+   * @param str
+   *          the potential CPE formatted string to validate
+   * @throws ParseException
+   *           if one of the rules for a CPE URI is violated
+   */
+  public static void validateURI(String str) throws ParseException {
+    // make sure uri starts with cpe:/
+<span class="pc bpc" id="L276" title="1 of 2 branches missed.">    if (!str.toLowerCase().startsWith(&quot;cpe:/&quot;)) {</span>
+<span class="nc" id="L277">      throw new ParseException(&quot;Error: URI must start with 'cpe:/'.  Given: &quot; + str, 0);</span>
+    }
+    // make sure uri doesn't contain more than 7 colons
+<span class="fc" id="L280">    int count = 0;</span>
+<span class="fc bfc" id="L281" title="All 2 branches covered.">    for (int i = 0; i != str.length(); i++) {</span>
+<span class="fc bfc" id="L282" title="All 2 branches covered.">      if (str.charAt(i) == ':') {</span>
+<span class="fc" id="L283">        count++;</span>
+      }
+    }
+<span class="pc bpc" id="L286" title="1 of 2 branches missed.">    if (count &gt; 7) {</span>
+<span class="nc" id="L287">      throw new ParseException(&quot;Error parsing URI.  Found &quot; + (count - 7) + &quot; extra components in: &quot; + str, 0);</span>
+    }
+<span class="fc" id="L289">  }</span>
+
+  /**
+   * This function is not part of the reference implementation pseudo code found in the CPE 2.3
+   * specification. It enforces three rules found in the specification: 1) A CPE formatted string must
+   * start with the characters &quot;cpe:2.3:&quot;. 2) A formatted string must contain 11 components. 3) A
+   * formatted string must not contain empty components. If any rule is violated, a ParseException is
+   * thrown.
+   * 
+   * @param str
+   *          the potential CPE formatted string to validate
+   * @throws ParseException
+   *           if one of the rules for a CPE formatted string is violated
+   */
+  public static void validateFS(String str) throws ParseException {
+<span class="pc bpc" id="L304" title="1 of 2 branches missed.">    if (!str.toLowerCase().startsWith(&quot;cpe:2.3:&quot;)) {</span>
+<span class="nc" id="L305">      throw new ParseException(&quot;Error: Formatted String must start with \&quot;cpe:2.3\&quot;. Given: &quot; + str, 0);</span>
+    }
+    // make sure fs contains exactly 12 unquoted colons
+<span class="fc" id="L308">    int count = 0;</span>
+<span class="fc bfc" id="L309" title="All 2 branches covered.">    for (int i = 0; i != str.length(); i++) {</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">      if (str.charAt(i) == ':') {</span>
+<span class="pc bpc" id="L311" title="1 of 2 branches missed.">        if (str.charAt(i - 1) != '\\') {</span>
+<span class="fc" id="L312">          count++;</span>
+        }
+<span class="pc bpc" id="L314" title="2 of 4 branches missed.">        if ((i + 1) &lt; str.length() &amp;&amp; str.charAt(i + 1) == ':') {</span>
+<span class="nc" id="L315">          throw new ParseException(&quot;Error parsing formatted string.  Found empty component&quot;, 0);</span>
+        }
+      }
+    }
+<span class="pc bpc" id="L319" title="1 of 2 branches missed.">    if (count &gt; 12) {</span>
+<span class="nc" id="L320">      int extra = (count - 12);</span>
+<span class="nc" id="L321">      StringBuffer msg = new StringBuffer(&quot;Error parsing formatted string.  Found &quot; + extra + &quot; extra component&quot;);</span>
+<span class="nc bnc" id="L322" title="All 2 branches missed.">      if (extra &gt; 1) {</span>
+<span class="nc" id="L323">        msg.append(&quot;s&quot;);</span>
+      }
+<span class="nc" id="L325">      msg.append(&quot; in: &quot; + str);</span>
+<span class="nc" id="L326">      throw new ParseException(msg.toString(), 0);</span>
+    }
+<span class="pc bpc" id="L328" title="1 of 2 branches missed.">    if (count &lt; 12) {</span>
+<span class="nc" id="L329">      int missing = (12 - count);</span>
+<span class="nc" id="L330">      StringBuffer msg = new StringBuffer(&quot;Error parsing formatted string. Missing &quot; + missing + &quot; component&quot;);</span>
+<span class="nc bnc" id="L331" title="All 2 branches missed.">      if (missing &gt; 1) {</span>
+<span class="nc" id="L332">        msg.append(&quot;s&quot;);</span>
+      }
+<span class="nc" id="L334">      throw new ParseException(msg.toString(), 0);</span>
+    }
+<span class="fc" id="L336">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

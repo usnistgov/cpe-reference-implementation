@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CPENameUnbinder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">CPE 2.3 Reference Implementation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.cpe.naming</a> &gt; <span class="el_source">CPENameUnbinder.java</span></div><h1>CPENameUnbinder.java</h1><pre class="source lang-java linenums">/**
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+// Copyright (c) 2011, The MITRE Corporation
+
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, are
+// permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, this list
+//      of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, this
+//      list of conditions and the following disclaimer in the documentation and/or other
+//      materials provided with the distribution.
+//    * Neither the name of The MITRE Corporation nor the names of its contributors may be
+//      used to endorse or promote products derived from this software without specific
+//      prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+// OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+// SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+// OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+// TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+// EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+package gov.nist.secauto.cpe.naming;
+
+import gov.nist.secauto.cpe.common.LogicalValue;
+import gov.nist.secauto.cpe.common.Utilities;
+import gov.nist.secauto.cpe.common.WellFormedName;
+
+import java.text.ParseException;
+
+/**
+ * The CPENameUnBinder class is a simple implementation of the CPE Name unbinding algorithm, as
+ * specified in the CPE Naming Standard version 2.3.
+ * 
+ * @see &lt;a href= &quot;https://doi.org/10.6028/NIST.IR.7695&quot;&gt;NISTIR 7695 Section 6.1.3&lt;/a&gt;
+ * @see &lt;a href= &quot;https://doi.org/10.6028/NIST.IR.7695&quot;&gt;NISTIR 7695 Section 6.2.3&lt;/a&gt;
+ * 
+ * @author &lt;a href=&quot;mailto:jkraunelis@mitre.org&quot;&gt;Joshua Kraunelis&lt;/a&gt;
+ * @author &lt;a href=&quot;mailto:david.waltermire@nist.gov&quot;&gt;David Waltermire&lt;/a&gt;
+ */
+public class CPENameUnbinder {
+
+  private CPENameUnbinder() {
+    // disable construction
+  }
+
+  /**
+   * Top level function used to unbind a URI to a WFN.
+   * 
+   * @param uri
+   *          String representing the URI to be unbound
+   * @return WellFormedName representing the unbound URI
+   * @throws ParseException
+   *           if the provided uri is invalid
+   */
+  public static WellFormedName unbindURI(String uri) throws ParseException {
+    // Validate the URI
+<span class="fc" id="L87">    Utilities.validateURI(uri);</span>
+    // Initialize the empty WFN.
+<span class="fc" id="L89">    WellFormedName result = new WellFormedName();</span>
+
+<span class="fc bfc" id="L91" title="All 2 branches covered.">    for (int i = 0; i != 8; i++) {</span>
+      // get the i'th component of uri
+<span class="fc" id="L93">      String value = getCompURI(uri, i);</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">      if (i &gt; 0) {</span>
+        // Get the WFN component using the enum ordinal
+<span class="fc" id="L96">        WellFormedName.Attribute attribute = WellFormedName.Attribute.values()[i - 1];</span>
+
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (WellFormedName.Attribute.EDITION.equals(attribute)) {</span>
+          // Special handling for edition component.
+          // Unpack edition if needed.
+<span class="pc bpc" id="L101" title="1 of 6 branches missed.">          if (value.equals(&quot;&quot;) || value.equals(&quot;-&quot;) || !Utilities.substr(value, 0, 1).equals(&quot;~&quot;)) {</span>
+            // Just a logical value or a non-packed value.
+            // So unbind to legacy edition, leaving other
+            // extended attributes unspecified.
+<span class="fc" id="L105">            result.set(attribute, decode(value));</span>
+          } else {
+            // We have five values packed together here.
+<span class="fc" id="L108">            unpack(value, result);</span>
+          }
+        } else {
+<span class="fc" id="L111">          result.set(attribute, decode(value));</span>
+        }
+      }
+    }
+<span class="fc" id="L115">    return result;</span>
+  }
+
+  /**
+   * Top level function to unbind a formatted string to WFN.
+   * 
+   * @param fs
+   *          Formatted string to unbind
+   * @return WellFormedName representing the unbound formatted string
+   * @throws ParseException
+   *           if the fs argument is malformed
+   */
+  public static WellFormedName unbindFS(String fs) throws ParseException {
+    // Validate the formatted string
+<span class="fc" id="L129">    Utilities.validateFS(fs);</span>
+    // Initialize empty WFN
+<span class="fc" id="L131">    WellFormedName result = new WellFormedName();</span>
+    // The cpe scheme is the 0th component, the cpe version is the 1st.
+    // So we start parsing at the 2nd component.
+<span class="fc bfc" id="L134" title="All 2 branches covered.">    for (int a = 2; a != 13; a++) {</span>
+      // Get the a'th string field.
+<span class="fc" id="L136">      Object value = getCompFS(fs, a);</span>
+      // Unbind the string.
+<span class="fc" id="L138">      value = unbindValueFS((String) value);</span>
+
+      // Get the WFN component using the enum ordinal
+<span class="fc" id="L141">      WellFormedName.Attribute attribute = WellFormedName.Attribute.values()[a - 2];</span>
+
+      // Set the value of the corresponding attribute.
+<span class="fc" id="L144">      result.set(attribute, value);</span>
+    }
+<span class="fc" id="L146">    return result;</span>
+  }
+
+  /**
+   * Returns the i'th field of the formatted string. The colon is the field delimiter unless prefixed
+   * by a backslash.
+   * 
+   * @param fs
+   *          formatted string to retrieve from
+   * @param index
+   *          index of field to retrieve from fs.
+   * @return value of index of formatted string
+   */
+  private static String getCompFS(String fs, int index) {
+<span class="fc bfc" id="L160" title="All 2 branches covered.">    if (index == 0) {</span>
+      // return the substring from index 0 to the first occurence of an
+      // unescaped colon
+<span class="fc" id="L163">      int colonIndex = Utilities.getUnescapedColonIndex(fs);</span>
+      // If no colon is found, we are at the end of the formatted string,
+      // so just return what's left.
+<span class="fc bfc" id="L166" title="All 2 branches covered.">      if (colonIndex == 0) {</span>
+<span class="fc" id="L167">        return fs;</span>
+      }
+<span class="fc" id="L169">      return Utilities.substr(fs, 0, colonIndex);</span>
+    } else {
+<span class="fc" id="L171">      return getCompFS(Utilities.substr(fs, Utilities.getUnescapedColonIndex(fs) + 1, fs.length()), index - 1);</span>
+    }
+  }
+
+  /**
+   * Takes a string value and returns the appropriate logical value if string is the bound form of a
+   * logical value. If string is some general value string, add quoting of non-alphanumerics as
+   * needed.
+   * 
+   * @param value
+   *          value to be unbound
+   * @return logical value or quoted string
+   * @throws ParseException
+   *           if the s argument is malformed
+   */
+  private static Object unbindValueFS(String value) throws ParseException {
+<span class="fc bfc" id="L187" title="All 2 branches covered.">    if (value.equals(&quot;*&quot;)) {</span>
+<span class="fc" id="L188">      return LogicalValue.ANY;</span>
+    }
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">    if (value.equals(&quot;-&quot;)) {</span>
+<span class="nc" id="L191">      return LogicalValue.NA;</span>
+    }
+<span class="fc" id="L193">    return addQuoting(value);</span>
+  }
+
+  /**
+   * Inspect each character in a string, copying quoted characters, with their escaping, into the
+   * result. Look for unquoted non alphanumerics and if not &quot;*&quot; or &quot;?&quot;, add escaping.
+   * 
+   * @param str
+   *          the string to process
+   * @return a string that has been properly escaped
+   * @throws ParseException
+   *           if the s argument is malformed
+   */
+  private static String addQuoting(String str) throws ParseException {
+<span class="fc" id="L207">    String result = &quot;&quot;;</span>
+<span class="fc" id="L208">    int idx = 0;</span>
+<span class="fc" id="L209">    boolean embedded = false;</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">    while (idx &lt; Utilities.strlen(str)) {</span>
+<span class="fc" id="L211">      String ch = Utilities.substr(str, idx, idx + 1);</span>
+<span class="pc bpc" id="L212" title="1 of 4 branches missed.">      if (Utilities.isAlphanum(ch) || ch.equals(&quot;_&quot;)) {</span>
+        // Alphanumeric characters pass untouched.
+<span class="fc" id="L214">        result = Utilities.strcat(result, ch);</span>
+<span class="fc" id="L215">        idx = idx + 1;</span>
+<span class="fc" id="L216">        embedded = true;</span>
+<span class="fc" id="L217">        continue;</span>
+      }
+<span class="fc bfc" id="L219" title="All 2 branches covered.">      if (ch.equals(&quot;\\&quot;)) {</span>
+        // Anything quoted in the bound string stays quoted in the
+        // unbound string.
+<span class="fc" id="L222">        result = Utilities.strcat(result, Utilities.substr(str, idx, idx + 2));</span>
+<span class="fc" id="L223">        idx = idx + 2;</span>
+<span class="fc" id="L224">        embedded = true;</span>
+<span class="fc" id="L225">        continue;</span>
+      }
+<span class="fc bfc" id="L227" title="All 2 branches covered.">      if (ch.equals(&quot;*&quot;)) {</span>
+        // An unquoted asterisk must appear at the beginning or the end
+        // of the string.
+<span class="pc bpc" id="L230" title="2 of 4 branches missed.">        if (idx == 0 || idx == (Utilities.strlen(str) - 1)) {</span>
+<span class="fc" id="L231">          result = Utilities.strcat(result, ch);</span>
+<span class="fc" id="L232">          idx = idx + 1;</span>
+<span class="fc" id="L233">          embedded = true;</span>
+<span class="fc" id="L234">          continue;</span>
+        } else {
+<span class="nc" id="L236">          throw new ParseException(&quot;Error! cannot have unquoted * embedded in formatted string.&quot;, 0);</span>
+        }
+      }
+<span class="pc bpc" id="L239" title="1 of 2 branches missed.">      if (ch.equals(&quot;?&quot;)) {</span>
+        // An unquoted question mark must appear at the beginning or
+        // end of the string, or in a leading or trailing sequence.
+        // if embedded is false, so must be preceded by ?
+        // if embedded is true, so must be followed by ?
+<span class="nc bnc" id="L244" title="All 6 branches missed.">        if (((idx == 0) || (idx == (Utilities.strlen(str) - 1)))</span>
+<span class="nc bnc" id="L245" title="All 4 branches missed.">            || (!embedded &amp;&amp; (Utilities.substr(str, idx - 1, idx).equals(&quot;?&quot;)))</span>
+<span class="nc bnc" id="L246" title="All 2 branches missed.">            || (embedded &amp;&amp; (Utilities.substr(str, idx + 1, idx + 2).equals(&quot;?&quot;)))) {</span>
+<span class="nc" id="L247">          result = Utilities.strcat(result, ch);</span>
+<span class="nc" id="L248">          idx = idx + 1;</span>
+<span class="nc" id="L249">          embedded = false;</span>
+<span class="nc" id="L250">          continue;</span>
+        } else {
+<span class="nc" id="L252">          throw new ParseException(&quot;Error! cannot have unquoted ? embedded in formatted string.&quot;, 0);</span>
+        }
+      }
+      // All other characters must be quoted.
+<span class="fc" id="L256">      result = Utilities.strcat(result, &quot;\\&quot;, ch);</span>
+<span class="fc" id="L257">      idx = idx + 1;</span>
+<span class="fc" id="L258">      embedded = true;</span>
+<span class="fc" id="L259">    }</span>
+<span class="fc" id="L260">    return result;</span>
+  }
+
+  /**
+   * Return the i'th component of the URI.
+   * 
+   * @param uri
+   *          String representation of URI to retrieve components from
+   * @param index
+   *          Index of component to return
+   * @return If i = 0, returns the URI scheme. Otherwise, returns the i'th component of uri
+   */
+  private static String getCompURI(String uri, int index) {
+<span class="fc bfc" id="L273" title="All 2 branches covered.">    if (index == 0) {</span>
+<span class="fc" id="L274">      return Utilities.substr(uri, index, uri.indexOf(&quot;/&quot;));</span>
+    }
+<span class="fc" id="L276">    String[] sa = uri.split(&quot;:&quot;);</span>
+    // If requested component exceeds the number
+    // of components in URI, return blank
+<span class="fc bfc" id="L279" title="All 2 branches covered.">    if (index &gt;= sa.length) {</span>
+<span class="fc" id="L280">      return &quot;&quot;;</span>
+    }
+<span class="fc bfc" id="L282" title="All 2 branches covered.">    if (index == 1) {</span>
+<span class="fc" id="L283">      return Utilities.substr(sa[index], 1, sa[index].length());</span>
+    }
+<span class="fc" id="L285">    return sa[index];</span>
+  }
+
+  /**
+   * Scans a string and returns a copy with all percent-encoded characters decoded. This function is
+   * the inverse of pctEncode() defined in the CPENameBinder class. Only legal percent-encoded forms
+   * are decoded. Others raise a ParseException.
+   * 
+   * @param str
+   *          String to be decoded
+   * @return decoded string
+   * @throws ParseException
+   *           if the provided string is invalid
+   * @see CPENameBinder#pctEncode(java.lang.String)
+   */
+  private static Object decode(String str) throws ParseException {
+<span class="fc bfc" id="L301" title="All 2 branches covered.">    if (str.equals(&quot;&quot;)) {</span>
+<span class="fc" id="L302">      return LogicalValue.ANY;</span>
+    }
+<span class="fc bfc" id="L304" title="All 2 branches covered.">    if (str.equals(&quot;-&quot;)) {</span>
+<span class="fc" id="L305">      return LogicalValue.NA;</span>
+    }
+    // Start the scanning loop.
+    // Normalize: convert all uppercase letters to lowercase first.
+<span class="fc" id="L309">    str = Utilities.toLowercase(str);</span>
+<span class="fc" id="L310">    String result = &quot;&quot;;</span>
+<span class="fc" id="L311">    int idx = 0;</span>
+<span class="fc" id="L312">    boolean embedded = false;</span>
+<span class="fc bfc" id="L313" title="All 2 branches covered.">    while (idx &lt; Utilities.strlen(str)) {</span>
+      // Get the idx'th character of s.
+<span class="fc" id="L315">      String ch = Utilities.substr(str, idx, idx + 1);</span>
+      // Deal with dot, hyphen, and tilde: decode with quoting.
+<span class="pc bpc" id="L317" title="2 of 6 branches missed.">      if (ch.equals(&quot;.&quot;) || ch.equals(&quot;-&quot;) || ch.equals(&quot;~&quot;)) {</span>
+<span class="fc" id="L318">        result = Utilities.strcat(result, &quot;\\&quot;, ch);</span>
+<span class="fc" id="L319">        idx = idx + 1;</span>
+        // a non-%01 encountered.
+<span class="fc" id="L321">        embedded = true;</span>
+<span class="fc" id="L322">        continue;</span>
+      }
+<span class="fc bfc" id="L324" title="All 2 branches covered.">      if (!ch.equals(&quot;%&quot;)) {</span>
+<span class="fc" id="L325">        result = Utilities.strcat(result, ch);</span>
+<span class="fc" id="L326">        idx = idx + 1;</span>
+        // a non-%01 encountered.
+<span class="fc" id="L328">        embedded = true;</span>
+<span class="fc" id="L329">        continue;</span>
+      }
+      // We get here if we have a substring starting w/ '%'.
+<span class="fc" id="L332">      String form = Utilities.substr(str, idx, idx + 3);</span>
+<span class="fc bfc" id="L333" title="All 2 branches covered.">      if (form.equals(&quot;%01&quot;)) {</span>
+<span class="pc bpc" id="L334" title="2 of 6 branches missed.">        if ((idx == 0) || (idx == Utilities.strlen(str) - 3)</span>
+<span class="pc bpc" id="L335" title="3 of 4 branches missed.">            || (!embedded &amp;&amp; Utilities.substr(str, idx - 3, idx - 1).equals(&quot;%01&quot;))</span>
+<span class="pc bpc" id="L336" title="1 of 2 branches missed.">            || (embedded &amp;&amp; (Utilities.strlen(str) &gt;= idx + 6))</span>
+<span class="pc bpc" id="L337" title="1 of 2 branches missed.">                &amp;&amp; (Utilities.substr(str, idx + 3, idx + 6).equals(&quot;%01&quot;))) {</span>
+<span class="fc" id="L338">          result = Utilities.strcat(result, &quot;?&quot;);</span>
+<span class="fc" id="L339">          idx = idx + 3;</span>
+<span class="fc" id="L340">          continue;</span>
+        } else {
+<span class="nc" id="L342">          throw new ParseException(&quot;Error decoding string&quot;, 0);</span>
+        }
+<span class="fc bfc" id="L344" title="All 2 branches covered.">      } else if (form.equals(&quot;%02&quot;)) {</span>
+<span class="pc bpc" id="L345" title="2 of 4 branches missed.">        if ((idx == 0) || (idx == (Utilities.strlen(str) - 3))) {</span>
+<span class="fc" id="L346">          result = Utilities.strcat(result, &quot;*&quot;);</span>
+        } else {
+<span class="nc" id="L348">          throw new ParseException(&quot;Error decoding string&quot;, 0);</span>
+        }
+<span class="pc bpc" id="L350" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%21&quot;)) {</span>
+<span class="nc" id="L351">        result = Utilities.strcat(result, &quot;\\!&quot;);</span>
+<span class="pc bpc" id="L352" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%22&quot;)) {</span>
+<span class="nc" id="L353">        result = Utilities.strcat(result, &quot;\\\&quot;&quot;);</span>
+<span class="pc bpc" id="L354" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%23&quot;)) {</span>
+<span class="nc" id="L355">        result = Utilities.strcat(result, &quot;\\#&quot;);</span>
+<span class="pc bpc" id="L356" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%24&quot;)) {</span>
+<span class="nc" id="L357">        result = Utilities.strcat(result, &quot;\\$&quot;);</span>
+<span class="pc bpc" id="L358" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%25&quot;)) {</span>
+<span class="nc" id="L359">        result = Utilities.strcat(result, &quot;\\%&quot;);</span>
+<span class="pc bpc" id="L360" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%26&quot;)) {</span>
+<span class="nc" id="L361">        result = Utilities.strcat(result, &quot;\\&amp;&quot;);</span>
+<span class="pc bpc" id="L362" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%27&quot;)) {</span>
+<span class="nc" id="L363">        result = Utilities.strcat(result, &quot;\\'&quot;);</span>
+<span class="pc bpc" id="L364" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%28&quot;)) {</span>
+<span class="nc" id="L365">        result = Utilities.strcat(result, &quot;\\(&quot;);</span>
+<span class="pc bpc" id="L366" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%29&quot;)) {</span>
+<span class="nc" id="L367">        result = Utilities.strcat(result, &quot;\\)&quot;);</span>
+<span class="fc bfc" id="L368" title="All 2 branches covered.">      } else if (form.equals(&quot;%2a&quot;)) {</span>
+<span class="fc" id="L369">        result = Utilities.strcat(result, &quot;\\*&quot;);</span>
+<span class="pc bpc" id="L370" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%2b&quot;)) {</span>
+<span class="nc" id="L371">        result = Utilities.strcat(result, &quot;\\+&quot;);</span>
+<span class="pc bpc" id="L372" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%2c&quot;)) {</span>
+<span class="nc" id="L373">        result = Utilities.strcat(result, &quot;\\,&quot;);</span>
+<span class="pc bpc" id="L374" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%2f&quot;)) {</span>
+<span class="nc" id="L375">        result = Utilities.strcat(result, &quot;\\/&quot;);</span>
+<span class="pc bpc" id="L376" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%3a&quot;)) {</span>
+<span class="nc" id="L377">        result = Utilities.strcat(result, &quot;\\)&quot;);</span>
+<span class="pc bpc" id="L378" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%3b&quot;)) {</span>
+<span class="nc" id="L379">        result = Utilities.strcat(result, &quot;\\;&quot;);</span>
+<span class="pc bpc" id="L380" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%3c&quot;)) {</span>
+<span class="nc" id="L381">        result = Utilities.strcat(result, &quot;\\&lt;&quot;);</span>
+<span class="pc bpc" id="L382" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%3d&quot;)) {</span>
+<span class="nc" id="L383">        result = Utilities.strcat(result, &quot;\\=&quot;);</span>
+<span class="pc bpc" id="L384" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%3e&quot;)) {</span>
+<span class="nc" id="L385">        result = Utilities.strcat(result, &quot;\\&gt;&quot;);</span>
+<span class="pc bpc" id="L386" title="1 of 2 branches missed.">      } else if (form.equals(&quot;%3f&quot;)) {</span>
+<span class="fc" id="L387">        result = Utilities.strcat(result, &quot;\\?&quot;);</span>
+<span class="nc bnc" id="L388" title="All 2 branches missed.">      } else if (form.equals(&quot;%40&quot;)) {</span>
+<span class="nc" id="L389">        result = Utilities.strcat(result, &quot;\\@&quot;);</span>
+<span class="nc bnc" id="L390" title="All 2 branches missed.">      } else if (form.equals(&quot;%5b&quot;)) {</span>
+<span class="nc" id="L391">        result = Utilities.strcat(result, &quot;\\[&quot;);</span>
+<span class="nc bnc" id="L392" title="All 2 branches missed.">      } else if (form.equals(&quot;%5c&quot;)) {</span>
+<span class="nc" id="L393">        result = Utilities.strcat(result, &quot;\\\\&quot;);</span>
+<span class="nc bnc" id="L394" title="All 2 branches missed.">      } else if (form.equals(&quot;%5d&quot;)) {</span>
+<span class="nc" id="L395">        result = Utilities.strcat(result, &quot;\\]&quot;);</span>
+<span class="nc bnc" id="L396" title="All 2 branches missed.">      } else if (form.equals(&quot;%5e&quot;)) {</span>
+<span class="nc" id="L397">        result = Utilities.strcat(result, &quot;\\^&quot;);</span>
+<span class="nc bnc" id="L398" title="All 2 branches missed.">      } else if (form.equals(&quot;%60&quot;)) {</span>
+<span class="nc" id="L399">        result = Utilities.strcat(result, &quot;\\`&quot;);</span>
+<span class="nc bnc" id="L400" title="All 2 branches missed.">      } else if (form.equals(&quot;%7b&quot;)) {</span>
+<span class="nc" id="L401">        result = Utilities.strcat(result, &quot;\\{&quot;);</span>
+<span class="nc bnc" id="L402" title="All 2 branches missed.">      } else if (form.equals(&quot;%7c&quot;)) {</span>
+<span class="nc" id="L403">        result = Utilities.strcat(result, &quot;\\|&quot;);</span>
+<span class="nc bnc" id="L404" title="All 2 branches missed.">      } else if (form.equals(&quot;%7d&quot;)) {</span>
+<span class="nc" id="L405">        result = Utilities.strcat(result, &quot;\\}&quot;);</span>
+<span class="nc bnc" id="L406" title="All 2 branches missed.">      } else if (form.equals(&quot;%7e&quot;)) {</span>
+<span class="nc" id="L407">        result = Utilities.strcat(result, &quot;\\~&quot;);</span>
+      } else {
+<span class="nc" id="L409">        throw new ParseException(&quot;Unknown form: &quot; + form, 0);</span>
+      }
+<span class="fc" id="L411">      idx = idx + 3;</span>
+<span class="fc" id="L412">      embedded = true;</span>
+<span class="fc" id="L413">    }</span>
+<span class="fc" id="L414">    return result;</span>
+  }
+
+  /**
+   * Unpacks the elements in s and sets the attributes in the given WellFormedName accordingly.
+   * 
+   * @param str
+   *          packed String
+   * @param wfn
+   *          WellFormedName
+   * @return The augmented WellFormedName
+   * @throws ParseException
+   *           if the str is marformed
+   */
+  private static WellFormedName unpack(String str, WellFormedName wfn) throws ParseException {
+    // Parse out the five elements.
+<span class="fc" id="L430">    int start = 1;</span>
+<span class="fc" id="L431">    int end = Utilities.strchr(str, '~', start);</span>
+    String edition;
+<span class="pc bpc" id="L433" title="1 of 2 branches missed.">    if (start == end) {</span>
+<span class="fc" id="L434">      edition = &quot;&quot;;</span>
+    } else {
+<span class="nc" id="L436">      edition = Utilities.substr(str, start, end);</span>
+    }
+
+<span class="fc" id="L439">    start = end + 1;</span>
+<span class="fc" id="L440">    end = Utilities.strchr(str, '~', start);</span>
+    String swEdition;
+<span class="pc bpc" id="L442" title="1 of 2 branches missed.">    if (start == end) {</span>
+<span class="nc" id="L443">      swEdition = &quot;&quot;;</span>
+    } else {
+<span class="fc" id="L445">      swEdition = Utilities.substr(str, start, end);</span>
+    }
+
+<span class="fc" id="L448">    start = end + 1;</span>
+<span class="fc" id="L449">    end = Utilities.strchr(str, '~', start);</span>
+    String targetSoftware;
+<span class="pc bpc" id="L451" title="1 of 2 branches missed.">    if (start == end) {</span>
+<span class="nc" id="L452">      targetSoftware = &quot;&quot;;</span>
+    } else {
+<span class="fc" id="L454">      targetSoftware = Utilities.substr(str, start, end);</span>
+    }
+
+<span class="fc" id="L457">    start = end + 1;</span>
+<span class="fc" id="L458">    end = Utilities.strchr(str, '~', start);</span>
+    String targetHardware;
+<span class="pc bpc" id="L460" title="1 of 2 branches missed.">    if (start == end) {</span>
+<span class="nc" id="L461">      targetHardware = &quot;&quot;;</span>
+    } else {
+<span class="fc" id="L463">      targetHardware = Utilities.substr(str, start, end);</span>
+    }
+
+<span class="fc" id="L466">    start = end + 1;</span>
+    String other;
+<span class="pc bpc" id="L468" title="1 of 2 branches missed.">    if (start &gt;= Utilities.strlen(str)) {</span>
+<span class="fc" id="L469">      other = &quot;&quot;;</span>
+    } else {
+<span class="nc" id="L471">      other = Utilities.substr(str, start, Utilities.strlen(str) - 1);</span>
+    }
+
+    // Set each component in the WFN.
+<span class="fc" id="L475">    wfn.set(WellFormedName.Attribute.EDITION, decode(edition));</span>
+<span class="fc" id="L476">    wfn.set(WellFormedName.Attribute.SW_EDITION, decode(swEdition));</span>
+<span class="fc" id="L477">    wfn.set(WellFormedName.Attribute.TARGET_SW, decode(targetSoftware));</span>
+<span class="fc" id="L478">    wfn.set(WellFormedName.Attribute.TARGET_HW, decode(targetHardware));</span>
+<span class="fc" id="L479">    wfn.set(WellFormedName.Attribute.OTHER, decode(other));</span>
+<span class="fc" id="L480">    return wfn;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

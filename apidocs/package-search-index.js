@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"gov.nist.secauto.cpe.common"},{"l":"gov.nist.secauto.cpe.matching"},{"l":"gov.nist.secauto.cpe.naming"},{"l":"gov.nist.secauto.cpe.naming.util"}]

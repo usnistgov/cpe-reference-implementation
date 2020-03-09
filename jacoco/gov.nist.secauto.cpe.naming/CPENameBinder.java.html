@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CPENameBinder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">CPE 2.3 Reference Implementation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.cpe.naming</a> &gt; <span class="el_source">CPENameBinder.java</span></div><h1>CPENameBinder.java</h1><pre class="source lang-java linenums">/**
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+// Copyright (c) 2011, The MITRE Corporation
+
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, are
+// permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, this list
+//      of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, this
+//      list of conditions and the following disclaimer in the documentation and/or other
+//      materials provided with the distribution.
+//    * Neither the name of The MITRE Corporation nor the names of its contributors may be
+//      used to endorse or promote products derived from this software without specific
+//      prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+// OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+// SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+// OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+// TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+// EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+package gov.nist.secauto.cpe.naming;
+
+import gov.nist.secauto.cpe.common.LogicalValue;
+import gov.nist.secauto.cpe.common.Utilities;
+import gov.nist.secauto.cpe.common.WellFormedName;
+
+/**
+ * The CPENameBinder class is a simple implementation of the CPE Name binding algorithm, as
+ * specified in the CPE Naming Standard version 2.3.
+ * 
+ * @see &lt;a href= &quot;https://doi.org/10.6028/NIST.IR.7695&quot;&gt;NISTIR 7695 Section 6.1.2&lt;/a&gt;
+ * @see &lt;a href= &quot;https://doi.org/10.6028/NIST.IR.7695&quot;&gt;NISTIR 7695 Section 6.2.2&lt;/a&gt;
+ * 
+ * @author &lt;a href=&quot;mailto:jkraunelis@mitre.org&quot;&gt;Joshua Kraunelis&lt;/a&gt;
+ * @author &lt;a href=&quot;mailto:david.waltermire@nist.gov&quot;&gt;David Waltermire&lt;/a&gt;
+ */
+public class CPENameBinder {
+
+  private CPENameBinder() {
+    // disable construction
+  }
+
+  // Define the attributes that correspond to the seven components in a v2.2. CPE.
+<span class="fc" id="L75">  public static final WellFormedName.Attribute[] URI_ATTRIBUTES</span>
+      = { WellFormedName.Attribute.PART, WellFormedName.Attribute.VENDOR, WellFormedName.Attribute.PRODUCT,
+          WellFormedName.Attribute.VERSION, WellFormedName.Attribute.UPDATE, WellFormedName.Attribute.EDITION,
+          // requires packing
+          WellFormedName.Attribute.LANGUAGE };
+
+  /**
+   * Binds a {@link WellFormedName} object to a URI.
+   * 
+   * @param wfn
+   *          WellFormedName to be bound to URI
+   * @return URI binding of WFN
+   */
+  public static String bindToURI(WellFormedName wfn) {
+
+    // Initialize the output with the CPE v2.2 URI prefix.
+<span class="fc" id="L91">    String uri = &quot;cpe:/&quot;;</span>
+
+    // Iterate over the well formed name
+<span class="fc bfc" id="L94" title="All 2 branches covered.">    for (WellFormedName.Attribute attr : URI_ATTRIBUTES) {</span>
+<span class="fc" id="L95">      String value = &quot;&quot;;</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">      if (WellFormedName.Attribute.EDITION.equals(attr)) {</span>
+        // Call the pack() helper function to compute the proper
+        // binding for the edition element.
+<span class="fc" id="L99">        String edition = bindValueForURI(wfn.get(WellFormedName.Attribute.EDITION));</span>
+<span class="fc" id="L100">        String swEdition = bindValueForURI(wfn.get(WellFormedName.Attribute.SW_EDITION));</span>
+<span class="fc" id="L101">        String targetSoftware = bindValueForURI(wfn.get(WellFormedName.Attribute.TARGET_SW));</span>
+<span class="fc" id="L102">        String targetHardware = bindValueForURI(wfn.get(WellFormedName.Attribute.TARGET_HW));</span>
+<span class="fc" id="L103">        String other = bindValueForURI(wfn.get(WellFormedName.Attribute.OTHER));</span>
+<span class="fc" id="L104">        value = pack(edition, swEdition, targetSoftware, targetHardware, other);</span>
+<span class="fc" id="L105">      } else {</span>
+        // Get the value for attr in wfn, then bind to a string
+        // for inclusion in the URI.
+<span class="fc" id="L108">        value = bindValueForURI(wfn.get(attr));</span>
+      }
+      // Append value to the URI then add a colon.
+<span class="fc" id="L111">      uri = Utilities.strcat(uri, value, &quot;:&quot;);</span>
+    }
+    // Return the URI string, with trailing colons trimmed.
+<span class="fc" id="L114">    return trim(uri);</span>
+  }
+
+  /**
+   * Top-level function used to bind WFN w to formatted string.
+   * 
+   * @param wfn
+   *          WellFormedName to bind
+   * @return Formatted String
+   */
+  public static String bindToFS(WellFormedName wfn) {
+    // Initialize the output with the CPE v2.3 string prefix.
+<span class="fc" id="L126">    String fs = &quot;cpe:2.3:&quot;;</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">    for (WellFormedName.Attribute attr : WellFormedName.Attribute.values()) {</span>
+<span class="fc" id="L128">      String value = bindValueForFS(wfn.get(attr));</span>
+<span class="fc" id="L129">      fs = Utilities.strcat(fs, value);</span>
+      // add a colon except at the very end
+<span class="fc bfc" id="L131" title="All 2 branches covered.">      if (!WellFormedName.Attribute.OTHER.equals(attr)) {</span>
+<span class="fc" id="L132">        fs = Utilities.strcat(fs, &quot;:&quot;);</span>
+      }
+    }
+<span class="fc" id="L135">    return fs;</span>
+  }
+
+  /**
+   * Convert the value v to its proper string representation for insertion to formatted string.
+   * 
+   * @param value
+   *          value to convert
+   * @return Formatted value
+   */
+  private static String bindValueForFS(Object value) {
+<span class="fc bfc" id="L146" title="All 2 branches covered.">    if (value instanceof LogicalValue) {</span>
+<span class="fc" id="L147">      LogicalValue logicalValue = (LogicalValue) value;</span>
+      // The value NA binds to a blank.
+<span class="fc bfc" id="L149" title="All 2 branches covered.">      if (LogicalValue.ANY.equals(logicalValue)) {</span>
+<span class="fc" id="L150">        return &quot;*&quot;;</span>
+      }
+      // The value NA binds to a single hyphen.
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">      if (LogicalValue.NA.equals(logicalValue)) {</span>
+<span class="fc" id="L154">        return &quot;-&quot;;</span>
+      }
+    }
+<span class="fc" id="L157">    return processQuotedChars((String) value);</span>
+  }
+
+  /**
+   * Inspect each character in the provided string, and escape as required.
+   * &lt;p&gt;
+   * Certain non-alpha characters pass thru without escaping into the result, but most retain
+   * escaping.
+   * 
+   * @param str
+   *          the string to process
+   * @return the processed string result
+   */
+  private static String processQuotedChars(String str) {
+<span class="fc" id="L171">    String result = &quot;&quot;;</span>
+<span class="fc" id="L172">    int index = 0;</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">    while (index &lt; Utilities.strlen(str)) {</span>
+<span class="fc" id="L174">      String ch = Utilities.substr(str, index, index + 1);</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">      if (!ch.equals(&quot;\\&quot;)) {</span>
+        // unquoted characters pass thru unharmed.
+<span class="fc" id="L177">        result = Utilities.strcat(result, ch);</span>
+      } else {
+        // escaped characters are examined.
+<span class="fc" id="L180">        String nextchr = Utilities.substr(str, index + 1, index + 2);</span>
+        // the period, hyphen and underscore pass unharmed.
+<span class="pc bpc" id="L182" title="2 of 6 branches missed.">        if (nextchr.equals(&quot;.&quot;) || nextchr.equals(&quot;-&quot;) || nextchr.equals(&quot;_&quot;)) {</span>
+<span class="fc" id="L183">          result = Utilities.strcat(result, nextchr);</span>
+<span class="fc" id="L184">          index = index + 2;</span>
+<span class="fc" id="L185">          continue;</span>
+        } else {
+          // all others retain escaping.
+<span class="fc" id="L188">          result = Utilities.strcat(result, &quot;\\&quot;, nextchr);</span>
+<span class="fc" id="L189">          index = index + 2;</span>
+<span class="fc" id="L190">          continue;</span>
+        }
+      }
+<span class="fc" id="L193">      index = index + 1;</span>
+<span class="fc" id="L194">    }</span>
+<span class="fc" id="L195">    return result;</span>
+  }
+
+  /**
+   * Converts a value to the proper string for including in a CPE v2.2-conformant URI. The logical
+   * value ANY binds to the blank in the 2.2-conformant URI.
+   * 
+   * @param value
+   *          the value to be converted
+   * @return the converted string
+   */
+  private static String bindValueForURI(Object value) {
+<span class="fc bfc" id="L207" title="All 2 branches covered.">    if (value instanceof LogicalValue) {</span>
+<span class="fc" id="L208">      LogicalValue logicalValue = (LogicalValue) value;</span>
+      // The value NA binds to a blank.
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">      if (LogicalValue.ANY.equals(logicalValue)) {</span>
+<span class="fc" id="L211">        return &quot;&quot;;</span>
+      }
+      // The value NA binds to a single hyphen.
+<span class="nc bnc" id="L214" title="All 2 branches missed.">      if (LogicalValue.NA.equals(logicalValue)) {</span>
+<span class="nc" id="L215">        return &quot;-&quot;;</span>
+      }
+    }
+
+    // If we get here, we're dealing with a string value.
+<span class="fc" id="L220">    return transformForURI((String) value);</span>
+  }
+
+  /**
+   * Scans an input string and performs a series of transformations to convert the string to a bound
+   * URI form.
+   * &lt;p&gt;
+   * The following transformations are performed:
+   * &lt;ul&gt;
+   * &lt;li&gt;Pass alphanumeric characters thru untouched&lt;/li&gt;
+   * &lt;li&gt;Percent-encode quoted non-alphanumerics as needed&lt;/li&gt;
+   * &lt;li&gt;Unquoted special characters are mapped to their special forms&lt;/li&gt;
+   * &lt;/ul&gt;
+   * 
+   * @param str
+   *          string to be transformed
+   * @return transformed string
+   */
+  private static String transformForURI(String str) {
+<span class="fc" id="L239">    String result = &quot;&quot;;</span>
+<span class="fc" id="L240">    int idx = 0;</span>
+
+<span class="fc bfc" id="L242" title="All 2 branches covered.">    while (idx &lt; Utilities.strlen(str)) {</span>
+      // Get the idx'th character of s.
+<span class="fc" id="L244">      String thischar = Utilities.substr(str, idx, idx + 1);</span>
+      // Alphanumerics (incl. underscore) pass untouched.
+<span class="fc bfc" id="L246" title="All 2 branches covered.">      if (Utilities.isAlphanum(thischar)) {</span>
+<span class="fc" id="L247">        result = Utilities.strcat(result, thischar);</span>
+<span class="fc" id="L248">        idx = idx + 1;</span>
+<span class="fc" id="L249">        continue;</span>
+      }
+      // Check for escape character.
+<span class="pc bpc" id="L252" title="1 of 2 branches missed.">      if (thischar.equals(&quot;\\&quot;)) {</span>
+<span class="fc" id="L253">        idx = idx + 1;</span>
+<span class="fc" id="L254">        String nxtchar = Utilities.substr(str, idx, idx + 1);</span>
+<span class="fc" id="L255">        result = Utilities.strcat(result, pctEncode(nxtchar));</span>
+<span class="fc" id="L256">        idx = idx + 1;</span>
+<span class="fc" id="L257">        continue;</span>
+      }
+      // Bind the unquoted '?' special character to &quot;%01&quot;.
+<span class="nc bnc" id="L260" title="All 2 branches missed.">      if (thischar.equals(&quot;?&quot;)) {</span>
+<span class="nc" id="L261">        result = Utilities.strcat(result, &quot;%01&quot;);</span>
+      }
+      // Bind the unquoted '*' special character to &quot;%02&quot;.
+<span class="nc bnc" id="L264" title="All 2 branches missed.">      if (thischar.equals(&quot;*&quot;)) {</span>
+<span class="nc" id="L265">        result = Utilities.strcat(result, &quot;%02&quot;);</span>
+      }
+<span class="nc" id="L267">      idx = idx + 1;</span>
+<span class="nc" id="L268">    }</span>
+<span class="fc" id="L269">    return result;</span>
+  }
+
+  /**
+   * Returns the appropriate percent-encoding of character c. Certain characters are returned without
+   * encoding.
+   * 
+   * @param ch
+   *          the single character string to be encoded
+   * @return the percent encoded string
+   */
+  private static String pctEncode(String ch) {
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">    if (ch.equals(&quot;!&quot;)) {</span>
+<span class="nc" id="L282">      return &quot;%21&quot;;</span>
+    }
+<span class="pc bpc" id="L284" title="1 of 2 branches missed.">    if (ch.equals(&quot;\&quot;&quot;)) {</span>
+<span class="nc" id="L285">      return &quot;%22&quot;;</span>
+    }
+<span class="pc bpc" id="L287" title="1 of 2 branches missed.">    if (ch.equals(&quot;#&quot;)) {</span>
+<span class="nc" id="L288">      return &quot;%23&quot;;</span>
+    }
+<span class="pc bpc" id="L290" title="1 of 2 branches missed.">    if (ch.equals(&quot;$&quot;)) {</span>
+<span class="nc" id="L291">      return &quot;%24&quot;;</span>
+    }
+<span class="pc bpc" id="L293" title="1 of 2 branches missed.">    if (ch.equals(&quot;%&quot;)) {</span>
+<span class="nc" id="L294">      return &quot;%25&quot;;</span>
+    }
+<span class="pc bpc" id="L296" title="1 of 2 branches missed.">    if (ch.equals(&quot;&amp;&quot;)) {</span>
+<span class="nc" id="L297">      return &quot;%26&quot;;</span>
+    }
+<span class="pc bpc" id="L299" title="1 of 2 branches missed.">    if (ch.equals(&quot;'&quot;)) {</span>
+<span class="nc" id="L300">      return &quot;%27&quot;;</span>
+    }
+<span class="pc bpc" id="L302" title="1 of 2 branches missed.">    if (ch.equals(&quot;(&quot;)) {</span>
+<span class="nc" id="L303">      return &quot;%28&quot;;</span>
+    }
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">    if (ch.equals(&quot;)&quot;)) {</span>
+<span class="nc" id="L306">      return &quot;%29&quot;;</span>
+    }
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">    if (ch.equals(&quot;*&quot;)) {</span>
+<span class="nc" id="L309">      return &quot;%2a&quot;;</span>
+    }
+<span class="pc bpc" id="L311" title="1 of 2 branches missed.">    if (ch.equals(&quot;+&quot;)) {</span>
+<span class="nc" id="L312">      return &quot;%2b&quot;;</span>
+    }
+<span class="pc bpc" id="L314" title="1 of 2 branches missed.">    if (ch.equals(&quot;,&quot;)) {</span>
+<span class="nc" id="L315">      return &quot;%2c&quot;;</span>
+    }
+    // bound without encoding.
+<span class="pc bpc" id="L318" title="1 of 2 branches missed.">    if (ch.equals(&quot;-&quot;)) {</span>
+<span class="nc" id="L319">      return ch;</span>
+    }
+    // bound without encoding.
+<span class="pc bpc" id="L322" title="1 of 2 branches missed.">    if (ch.equals(&quot;.&quot;)) {</span>
+<span class="fc" id="L323">      return ch;</span>
+    }
+<span class="nc bnc" id="L325" title="All 2 branches missed.">    if (ch.equals(&quot;/&quot;)) {</span>
+<span class="nc" id="L326">      return &quot;%2f&quot;;</span>
+    }
+<span class="nc bnc" id="L328" title="All 2 branches missed.">    if (ch.equals(&quot;:&quot;)) {</span>
+<span class="nc" id="L329">      return &quot;%3a&quot;;</span>
+    }
+<span class="nc bnc" id="L331" title="All 2 branches missed.">    if (ch.equals(&quot;;&quot;)) {</span>
+<span class="nc" id="L332">      return &quot;%3b&quot;;</span>
+    }
+<span class="nc bnc" id="L334" title="All 2 branches missed.">    if (ch.equals(&quot;&lt;&quot;)) {</span>
+<span class="nc" id="L335">      return &quot;%3c&quot;;</span>
+    }
+<span class="nc bnc" id="L337" title="All 2 branches missed.">    if (ch.equals(&quot;=&quot;)) {</span>
+<span class="nc" id="L338">      return &quot;%3d&quot;;</span>
+    }
+<span class="nc bnc" id="L340" title="All 2 branches missed.">    if (ch.equals(&quot;&gt;&quot;)) {</span>
+<span class="nc" id="L341">      return &quot;%3e&quot;;</span>
+    }
+<span class="nc bnc" id="L343" title="All 2 branches missed.">    if (ch.equals(&quot;?&quot;)) {</span>
+<span class="nc" id="L344">      return &quot;%3f&quot;;</span>
+    }
+<span class="nc bnc" id="L346" title="All 2 branches missed.">    if (ch.equals(&quot;@&quot;)) {</span>
+<span class="nc" id="L347">      return &quot;%40&quot;;</span>
+    }
+<span class="nc bnc" id="L349" title="All 2 branches missed.">    if (ch.equals(&quot;[&quot;)) {</span>
+<span class="nc" id="L350">      return &quot;%5b&quot;;</span>
+    }
+<span class="nc bnc" id="L352" title="All 2 branches missed.">    if (ch.equals(&quot;\\&quot;)) {</span>
+<span class="nc" id="L353">      return &quot;%5c&quot;;</span>
+    }
+<span class="nc bnc" id="L355" title="All 2 branches missed.">    if (ch.equals(&quot;]&quot;)) {</span>
+<span class="nc" id="L356">      return &quot;%5d&quot;;</span>
+    }
+<span class="nc bnc" id="L358" title="All 2 branches missed.">    if (ch.equals(&quot;^&quot;)) {</span>
+<span class="nc" id="L359">      return &quot;%5e&quot;;</span>
+    }
+<span class="nc bnc" id="L361" title="All 2 branches missed.">    if (ch.equals(&quot;`&quot;)) {</span>
+<span class="nc" id="L362">      return &quot;%60&quot;;</span>
+    }
+<span class="nc bnc" id="L364" title="All 2 branches missed.">    if (ch.equals(&quot;{&quot;)) {</span>
+<span class="nc" id="L365">      return &quot;%7b&quot;;</span>
+    }
+<span class="nc bnc" id="L367" title="All 2 branches missed.">    if (ch.equals(&quot;|&quot;)) {</span>
+<span class="nc" id="L368">      return &quot;%7c&quot;;</span>
+    }
+<span class="nc bnc" id="L370" title="All 2 branches missed.">    if (ch.equals(&quot;}&quot;)) {</span>
+<span class="nc" id="L371">      return &quot;%7d&quot;;</span>
+    }
+<span class="nc bnc" id="L373" title="All 2 branches missed.">    if (ch.equals(&quot;~&quot;)) {</span>
+<span class="nc" id="L374">      return &quot;%7d&quot;;</span>
+    }
+    // Shouldn't reach here, return original character
+<span class="nc" id="L377">    return ch;</span>
+  }
+
+  /**
+   * Packs the values of the five arguments into the single edition component. If all the values are
+   * blank, the function returns a blank.
+   * 
+   * @param edition
+   *          edition string
+   * @param swEdition
+   *          software edition string
+   * @param targetSoftware
+   *          target software string
+   * @param targetHardware
+   *          target hardware string
+   * @param other
+   *          other edition information string
+   * @return the packed string, or blank
+   */
+  private static String pack(String edition, String swEdition, String targetSoftware, String targetHardware,
+      String other) {
+<span class="pc bpc" id="L398" title="4 of 8 branches missed.">    if (swEdition.equals(&quot;&quot;) &amp;&amp; targetSoftware.equals(&quot;&quot;) &amp;&amp; targetHardware.equals(&quot;&quot;) &amp;&amp; other.equals(&quot;&quot;)) {</span>
+      // All the extended attributes are blank, so don't do
+      // any packing, just return ed.
+<span class="fc" id="L401">      return edition;</span>
+    }
+    // Otherwise, pack the five values into a single string
+    // prefixed and internally delimited with the tilde.
+<span class="nc" id="L405">    return Utilities.strcat(&quot;~&quot;, edition, &quot;~&quot;, swEdition, &quot;~&quot;, targetSoftware, &quot;~&quot;, targetHardware, &quot;~&quot;, other);</span>
+  }
+
+  /**
+   * Removes trailing colons from the URI.
+   * 
+   * @param str
+   *          the string to be trimmed
+   * @return the trimmed string
+   */
+  private static String trim(String str) {
+<span class="fc" id="L416">    String s1 = Utilities.reverse(str);</span>
+<span class="fc" id="L417">    int idx = 0;</span>
+<span class="pc bpc" id="L418" title="1 of 2 branches missed.">    for (int i = 0; i != Utilities.strlen(s1); i++) {</span>
+<span class="fc bfc" id="L419" title="All 2 branches covered.">      if (Utilities.substr(s1, i, i + 1).equals(&quot;:&quot;)) {</span>
+<span class="fc" id="L420">        idx = idx + 1;</span>
+      } else {
+        break;
+      }
+    }
+    // Return the substring after all trailing colons,
+    // reversed back to its original character order.
+<span class="fc" id="L427">    return Utilities.reverse(Utilities.substr(s1, idx, Utilities.strlen(s1)));</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
