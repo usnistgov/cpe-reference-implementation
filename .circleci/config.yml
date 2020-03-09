@@ -21,7 +21,7 @@ commands:
       - run:
           name: Retrieve all Maven plugins and dependencies
           command: |
-            mvn  -s .circleci/maven-release-settings.xml -Prelease -Preporting --fail-never dependency:go-offline || true
+            mvn  -s .circleci/maven-release-settings.xml -Prelease -Preporting -Pallow-snapshots --fail-never dependency:go-offline || true
   save-maven-cache:
     steps:
       - save_cache:

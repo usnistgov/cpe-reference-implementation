@@ -19,6 +19,12 @@
 	<description>A CPE 2.3 reference implementation supporting the creation and use of CPE Names using the Java programming language.</description>
 	<url>${site.url}</url>
 
+	<properties>
+		<site.url>https://pages.nist.gov/cpe-reference-implementation</site.url>
+		<scm.url>https://github.com/usnistgov/cpe-reference-implementation</scm.url>
+		<issueManagement.url>https://github.com/usnistgov/cpe-reference-implementation/issues</issueManagement.url>
+	</properties>
+
 	<issueManagement>
 		<url>${issueManagement.url}</url>
 		<system>GitHub Issues</system>
@@ -78,12 +84,6 @@
 			</roles>
 		</contributor>
 	</contributors>
-
-	<properties>
-		<site.url>https://pages.nist.gov/cpe-reference-implementation</site.url>
-		<scm.url>https://github.com/usnistgov/cpe-reference-implementation</scm.url>
-		<issueManagement.url>https://github.com/usnistgov/cpe-reference-implementation/issues</issueManagement.url>
-	</properties>
 
 	<dependencies>
 		<dependency>
